@@ -8,11 +8,22 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
+var mongoose = require('mongoose');
 
 var app = express();
 
+// database
+mongoose.connect('mongodb://localhost/test');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+  console.log("connected to mongodb");
+  //set up models
+  require('./models/User');
+});
+
 // all environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3001);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
