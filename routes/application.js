@@ -12,11 +12,17 @@ exports.login = function (req, res) {
 exports.attempt_login = function (req, res) {
   var post = req.body;
   User.findOne({name: post.user}, function(err, user) {
-    if (user != undefined && user.password == post.password) {
-      req.session.user_id = user.id;
-      res.redirect('/');
+    if (user != undefined) {
+      user.comparePassword(post.password, function(err, isMatch) {
+        if (isMatch) {
+          req.session.user_id = user._id;
+          res.redirect('/');
+        }
+        else
+          res.send('Bad Password');
+      });
     } else {
-      res.send('Bad user/pass');
+      res.send('Bad username');
     }
   })
 };
