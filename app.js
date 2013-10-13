@@ -6,20 +6,19 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
+var application = require('./routes/application');
 var http = require('http');
 var path = require('path');
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'), 
+    User = require('./models/User');
 
 var app = express();
-
 // database
 mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
   console.log("connected to mongodb");
-  //set up models
-  require('./models/User');
 });
 
 // all environments
@@ -32,6 +31,18 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
+
+app.configure(function(){
+  app.use(function(req, res, next){
+    var id = mongoose.Types.ObjectId(req.session.user_id);
+    User.findById(id, function(err, cur_user) {
+      if (cur_user != undefined)
+        res.locals.current_user = cur_user;
+      next();
+    });
+  });
+});
+
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -40,8 +51,20 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
-app.get('/users', user.list);
+function checkAuth(req, res, next) {
+  if (!req.session.user_id) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+}
+
+app.get('/login', application.login);
+app.post('/attempt_login', application.attempt_login);
+app.post('/create_account', application.create_account);
+app.get('/logout', application.logout); 
+app.get('/', checkAuth, routes.index);
+app.get('/users', checkAuth, user.list);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

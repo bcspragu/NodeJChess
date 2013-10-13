@@ -10,4 +10,8 @@ html
     script(src='/javascripts/chessboard.js')
     script(src='/javascripts/board.js')
   body
+    -if (current_user != undefined)
+      .header
+        b="You are logged in as "+ current_user.name
+        a(href="/logout")="(Logout)"
     block content
