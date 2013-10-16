@@ -1,4 +1,4 @@
-Raphael.fn.chess_square = function(x,y,cell_size){
+Raphael.fn.chessSquare = function(x,y,cell_size){
   var cell = this.rect(x*cell_size,y*cell_size,cell_size,cell_size,5);
   if((x+y) % 2 == 0){
     cell.attr({fill: 'white'});
@@ -18,7 +18,7 @@ $.fn.chessboard = function(){
   paper.rect(0,0,width,width,5);
   for(var x = 0; x < 8; x++){
     for(var y = 0; y < 8; y++){
-      var cell = makeCell(x,y,cell_size);
+      var cell = paper.chessSquare(x,y,cell_size);
     }
   }
 }
