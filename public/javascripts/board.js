@@ -1,3 +1,3 @@
 $(function(){
-  $('#board').chessboard();
+  var chess = new Chess('board');
 })
