@@ -1,10 +1,44 @@
 function Chess(id, fen) {
+  var c = this;
   if($('#'+id).length == 1){
     if(fen){
-      this.logic = new ChessLogic(start_fen);
+      c.logic = new ChessLogic(start_fen);
     }else {
-      this.logic = new ChessLogic();
+      c.logic = new ChessLogic();
     }
-    $('#'+id).chessboard();
+    c.cells = $('#'+id).chessboard();
+  }
+
+  c.draw = function(){
+    var fen = c.logic.fen().split('');
+    var column = 0;
+    var row = 7;
+    var index = 0;
+    while(fen[index] !== ' '){
+      //If it's a slash, start on the next row
+      if(fen[index] === '/'){
+        row--;
+        column = 0;
+        index++;
+      }
+      //If it's a number, we just want to draw that many blank spaces
+      else if($.isNumeric(fen[index])){
+        var spaces = parseInt(fen[index]);
+        for(var i = 0; i < spaces; i++){
+          c.cells[column][row].draw('blank');
+          column++;
+          if(column == 8){
+            column = 0;
+          }
+        }
+        index++;
+      }
+      //Otherwise it's a character and we can draw it
+      else{
+        c.cells[column][row].draw(fen[index]);
+        column++;
+        index++;
+      }
+    }
   }
 }

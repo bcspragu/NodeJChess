@@ -1,15 +1,17 @@
 Raphael.fn.chessSquare = function(x,y,cell_size){
-  var cell = this.rect(x*cell_size,y*cell_size,cell_size,cell_size,3);
+  var paper = this;
+  var cell = paper.rect(x*cell_size,y*cell_size,cell_size,cell_size,3);
   if((x+y) % 2 == 0){
     cell.attr({fill: 'white', 'stroke-width': 0}).data('color','white');
   }else{
-    cell.attr({fill: 'black', 'stroke-width': 0}).data('color','black');
+    cell.attr({fill: '#444', 'stroke-width': 0}).data('color','#444');
   }
-
+  
   //Labeling each cell with algebraic chess notation
   cell.data('column',String.fromCharCode(x+97));
   cell.data('row',8-y);
-
+  cell.data('image',
+      paper.image("images/pieces/blank.png", x*cell_size+cell_size*0.1, y*cell_size+cell_size*0.1, cell_size*0.8, cell_size*0.8))
   cell.mouseover(function(){
     this.animate({fill: '#888'},250);
   })
@@ -24,6 +26,10 @@ Raphael.fn.chessSquare = function(x,y,cell_size){
   //Cell Methods
   cell.boardPos = function(){
     return cell.data('column')+cell.data('row');
+  }
+
+  cell.draw = function(pieceCharacter){
+    cell.data('image').attr({src: 'images/pieces/'+pieceCharacter+'.png'});
   }
 
   return cell
@@ -44,4 +50,5 @@ $.fn.chessboard = function(start_fen){
     }
   }
   paper.rect(0,0,width,width,3).attr({'stroke-width': 2, stroke: '#000'});
+  return cells;
 }
