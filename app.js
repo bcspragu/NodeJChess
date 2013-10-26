@@ -59,11 +59,11 @@ function checkAuth(req, res, next) {
   }
 }
 
-app.get('/login', application.login);
+app.get('/login', application.login); 
 app.post('/attempt_login', application.attempt_login);
 app.post('/create_account', application.create_account);
 app.get('/logout', application.logout); 
-app.get('/', checkAuth, routes.index);
+app.get('/', checkAuth, routes.index); //Checks to see if logged in, if they arn't goes to the checkAuth method
 app.get('/users', checkAuth, user.list);
 
 http.createServer(app).listen(app.get('port'), function(){
