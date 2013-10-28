@@ -1,6 +1,7 @@
 Raphael.fn.chessSquare = function(x,y,cell_size){
   var paper = this;
   var cell = paper.rect(x*cell_size,y*cell_size,cell_size,cell_size,3);
+  var image = paper.image("images/pieces/blank.png", x*cell_size+cell_size*0.1, y*cell_size+cell_size*0.1, cell_size*0.8, cell_size*0.8);
   if((x+y) % 2 == 0){
     cell.attr({fill: 'white', 'stroke-width': 0}).data('color','white');
   }else{
@@ -10,18 +11,21 @@ Raphael.fn.chessSquare = function(x,y,cell_size){
   //Labeling each cell with algebraic chess notation
   cell.data('column',String.fromCharCode(x+97));
   cell.data('row',8-y);
-  cell.data('image',
-      paper.image("images/pieces/blank.png", x*cell_size+cell_size*0.1, y*cell_size+cell_size*0.1, cell_size*0.8, cell_size*0.8))
-  cell.mouseover(function(){
-    this.animate({fill: '#888'},250);
-  })
-  .mouseout(function(){
-    this.animate({fill: this.data('color')},250);
-  })
-  .click(function(){
-    var column = this.data('column');
-    var row = this.data('row');
-  });
+  cell.data('image', image);
+  var c_mouseover = function(){
+    cell.animate({fill: '#888'},250);
+  } 
+  var c_mouseout = function(){
+    cell.animate({fill: cell.data('color')},250);
+  }
+  var c_click = function(){
+    var column = cell.data('column');
+    var row = cell.data('row');
+  }
+  
+  //Add our calls
+  cell.mouseover(c_mouseover).mouseout(c_mouseout).click(c_click);
+  image.mouseover(c_mouseover).mouseout(c_mouseout).click(c_click);
 
   //Cell Methods
   cell.boardPos = function(){
