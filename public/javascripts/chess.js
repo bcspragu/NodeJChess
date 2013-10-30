@@ -40,6 +40,15 @@ function Chess(id, fen) {
   }
 
   c.highlightMoves = function(moves){
+    for(var i = 0; i < 8; i++){
+      for(var j = 0; j < 8; j++){
+        var cell = c.cells[i][j];
+        if(cell.data('highlighted')){
+          cell.data('highlighted',false);
+          cell.animate({fill: cell.data('color')},250);
+        }
+      }
+    }
     for(var i = 0; i < moves.length; i++){
       if(moves[i].length == 3){
         moves[i] = moves[i].substring(1);
@@ -66,10 +75,14 @@ function Chess(id, fen) {
     cell.data('image', image);
     cell.data('highlighted', false);
     var c_mouseover = function(){
-      cell.animate({fill: '#888'},250);
+      if(!cell.data('highlighted')){
+        cell.animate({fill: '#888'},250);
+      }
     } 
     var c_mouseout = function(){
-      cell.animate({fill: cell.data('color')},250);
+      if(!cell.data('highlighted')){
+        cell.animate({fill: cell.data('color')},250);
+      }
     }
     var c_click = function(){
       var board_loc = cell.boardPos();
