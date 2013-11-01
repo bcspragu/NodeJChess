@@ -8,12 +8,12 @@ function Chess(id, fen) {
     if(c.valid){
       var fen = c.logic.fen().split('');
       var column = 0;
-      var row = 7;
+      var row = 0;
       var index = 0;
       while(fen[index] !== ' '){
         //If it's a slash, start on the next row
         if(fen[index] === '/'){
-          row--;
+          row++;
           column = 0;
           index++;
         }
@@ -40,21 +40,9 @@ function Chess(id, fen) {
   }
 
   c.highlightMoves = function(moves){
-    for(var i = 0; i < 8; i++){
-      for(var j = 0; j < 8; j++){
-        var cell = c.cells[i][j];
-        if(cell.data('highlighted')){
-          cell.data('highlighted',false);
-          cell.animate({fill: cell.data('color')},250);
-        }
-      }
-    }
     for(var i = 0; i < moves.length; i++){
-      if(moves[i].length == 3){
-        moves[i] = moves[i].substring(1);
-      }
-      var column = moves[i].charCodeAt(0)-97;
-      var row = parseInt(8-moves[i].charAt(1));
+      var column = moves[i].to.charCodeAt(0)-97;
+      var row = parseInt(8-moves[i].to.charAt(1));
       c.cells[column][row].highlight();
     }
   }
@@ -88,17 +76,18 @@ function Chess(id, fen) {
       var board_loc = cell.boardPos();
       //If we select a highlighted cell
       if(cell.data('highlighted')){
-        c.logic.move({from: currentPiece.boardPos(), to: cell.boardPos()});
-        var piece = currentPiece.data('image').attr('src');
-        currentPiece.data('image').attr({src: 'images/pieces/blank.png'});
+        c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos()});
+        c.draw();
         var column = cell.boardPos().charCodeAt(0)-97;
         var row = parseInt(8-cell.boardPos().charAt(1));
-        c.cells[column][row].data('image').attr({src: piece});
+        c.currentPiece = null;
+        c.unhighlightAll();
       }
-      //If there is a piece on that cell
-      if(c.logic.get(board_loc)){
-        c.highlightMoves(c.logic.moves({square: board_loc}));
-        currentPiece = cell;
+      //If there is a piece on that cell and it's their turn
+      if(c.logic.get(board_loc) && c.logic.turn() === c.logic.get(board_loc).color){
+        c.unhighlightAll();
+        c.highlightMoves(c.logic.moves({square: board_loc, verbose: true}));
+        c.currentPiece = cell;
       }
     }
 
@@ -121,6 +110,18 @@ function Chess(id, fen) {
     }
 
     return cell
+  }
+
+  c.unhighlightAll = function(){
+    for(var i = 0; i < 8; i++){
+      for(var j = 0; j < 8; j++){
+        var cell = c.cells[i][j];
+        if(cell.data('highlighted')){
+          cell.animate({fill: cell.data('color')},250);
+          cell.data('highlighted',false);
+        }
+      }
+    }
   }
 
   if(c.valid){
