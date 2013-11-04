@@ -43,8 +43,7 @@ function Chess(id, fen) {
     for(var i = 0; i < moves.length; i++){
       var column = moves[i].to.charCodeAt(0)-97;
       var row = parseInt(8-moves[i].to.charAt(1));
-      debugger;
-      c.cells[column][row].highlight('captured' in moves[i]);
+      c.cells[column][row].highlight('promotion' in moves[i],'captured' in moves[i]);
     }
   }
 
@@ -63,6 +62,7 @@ function Chess(id, fen) {
     cell.data('row',8-y);
     cell.data('image', image);
     cell.data('highlighted', false);
+    cell.data('promotion', false);
     var c_mouseover = function(){
       if(!cell.data('highlighted')){
         cell.animate({fill: '#AAA'},250);
@@ -77,7 +77,12 @@ function Chess(id, fen) {
       var board_loc = cell.boardPos();
       //If we select a highlighted cell
       if(cell.data('highlighted')){
-        c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos()});
+        if(cell.data('promotion')){
+          var promotion = prompt('What would you like to promote to? (q,r,b,n)');
+          c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos(), promotion: promotion});
+        }else{
+          c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos()});
+        }
         c.draw();
         var column = cell.boardPos().charCodeAt(0)-97;
         var row = parseInt(8-cell.boardPos().charAt(1));
@@ -105,8 +110,12 @@ function Chess(id, fen) {
       cell.data('image').attr({src: 'images/pieces/'+pieceCharacter+'.png'});
     }
 
-    cell.highlight = function(isKill){
-      if(isKill){
+    cell.highlight = function(isPromotion,isKill){
+      if(isPromotion){
+        cell.attr({fill: '#0000FF'});
+        cell.data('promotion',true);
+      }
+      else if(isKill){
         cell.attr({fill: '#FF0000'});
       }else{
         cell.attr({fill: '#FFB800'});
@@ -124,6 +133,7 @@ function Chess(id, fen) {
         if(cell.data('highlighted')){
           cell.animate({fill: cell.data('color')},250);
           cell.data('highlighted',false);
+          cell.data('promotion',false);
         }
       }
     }
