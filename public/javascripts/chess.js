@@ -43,7 +43,8 @@ function Chess(id, fen) {
     for(var i = 0; i < moves.length; i++){
       var column = moves[i].to.charCodeAt(0)-97;
       var row = parseInt(8-moves[i].to.charAt(1));
-      c.cells[column][row].highlight();
+      debugger;
+      c.cells[column][row].highlight('captured' in moves[i]);
     }
   }
 
@@ -54,7 +55,7 @@ function Chess(id, fen) {
     if((x+y) % 2 == 0){
       cell.attr({fill: 'white', 'stroke-width': 0}).data('color','white');
     }else{
-      cell.attr({fill: '#444', 'stroke-width': 0}).data('color','#444');
+      cell.attr({fill: '#04BAC2', 'stroke-width': 0}).data('color','#04BAC2');
     }
 
     //Labeling each cell with algebraic chess notation
@@ -64,7 +65,7 @@ function Chess(id, fen) {
     cell.data('highlighted', false);
     var c_mouseover = function(){
       if(!cell.data('highlighted')){
-        cell.animate({fill: '#888'},250);
+        cell.animate({fill: '#AAA'},250);
       }
     } 
     var c_mouseout = function(){
@@ -104,8 +105,12 @@ function Chess(id, fen) {
       cell.data('image').attr({src: 'images/pieces/'+pieceCharacter+'.png'});
     }
 
-    cell.highlight = function(){
-      cell.attr({fill: '#0A0'});
+    cell.highlight = function(isKill){
+      if(isKill){
+        cell.attr({fill: '#FF0000'});
+      }else{
+        cell.attr({fill: '#FFB800'});
+      }
       cell.data('highlighted',true);
     }
 
