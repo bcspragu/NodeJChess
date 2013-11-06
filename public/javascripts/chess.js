@@ -130,7 +130,7 @@ function Chess(id, fen) {
     var padding = c.cell_size*0.1;
     var xloc = column*c.cell_size + padding;
     var yloc = row*c.cell_size + padding;
-    var piece = c.paper.image('images/pieces/'+piece+'.png', xloc, yloc, size, size);
+    var piece = c.paper.image('/images/pieces/'+piece+'.png', xloc, yloc, size, size);
     piece.click(c.cells[column][row].c_click);
     piece.mouseover(c.cells[column][row].c_mouseover);
     piece.mouseout(c.cells[column][row].c_mouseout);
