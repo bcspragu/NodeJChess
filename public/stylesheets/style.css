@@ -12,3 +12,12 @@ a {
   width: 100%;
   padding-bottom: 10px;
 }
+
+#game_list table{
+  border: 2px solid black;
+  width: 100%;
+}
+
+#game_list table th {
+  border: 2px solid black;
+}

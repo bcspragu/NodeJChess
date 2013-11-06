@@ -50,7 +50,7 @@ function Chess(id, fen) {
   c.chessCell = function(x,y,cell_size){
     var paper = c.paper;
     var cell = paper.rect(x*cell_size,y*cell_size,cell_size,cell_size,3);
-    var image = paper.image("images/pieces/blank.png", x*cell_size+cell_size*0.1, y*cell_size+cell_size*0.1, cell_size*0.8, cell_size*0.8);
+    var image = paper.image("/images/pieces/blank.png", x*cell_size+cell_size*0.1, y*cell_size+cell_size*0.1, cell_size*0.8, cell_size*0.8);
     if((x+y) % 2 == 0){
       cell.attr({fill: 'white', 'stroke-width': 0}).data('color','white');
     }else{
@@ -107,7 +107,7 @@ function Chess(id, fen) {
     }
 
     cell.draw = function(pieceCharacter){
-      cell.data('image').attr({src: 'images/pieces/'+pieceCharacter+'.png'});
+      cell.data('image').attr({src: '/images/pieces/'+pieceCharacter+'.png'});
     }
 
     cell.highlight = function(isPromotion,isKill){
