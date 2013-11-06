@@ -2,4 +2,24 @@ extends layout
 
 block content
   .container_16
-    #board.grid_10.prefix_2
+    #game_list.grid_10
+      table
+        tr
+          th="Game Name"
+          th="White Player"
+          th="Black Player"
+          th="Private?"
+        -for (var i = 0; i < games.length; i++)
+          -var game = games[i]
+          tr 
+            td
+              a(href="/game/"+game._id)
+                =game.name
+            td=(game.white ? game.white : 'None')
+            td=(game.black ? game.black : 'None')
+            td=game.private
+    #new_game.grid_10
+      form(name="create_game", action="/create_game", method="post")
+        ="Create a game: "
+        input(type="text", name="name")
+        input(type="submit", value="Create Game")

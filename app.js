@@ -6,11 +6,13 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
+var game = require('./routes/game');
 var application = require('./routes/application');
 var http = require('http');
 var path = require('path');
 var mongoose = require('mongoose'), 
-    User = require('./models/User');
+    User = require('./models/User'),
+    Game = require('./models/Game');
 
 var app = express();
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
@@ -66,6 +68,8 @@ app.post('/create_account', application.create_account);
 app.get('/logout', application.logout); 
 app.get('/', checkAuth, routes.index); //Checks to see if logged in, if they arn't goes to the checkAuth method
 app.get('/users', checkAuth, user.list);
+app.post('/create_game', checkAuth, game.create_game)
+app.get('/game/:id/', checkAuth, game.show)
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
