@@ -21,5 +21,13 @@ block content
     #new_game.grid_10
       form(name="create_game", action="/create_game", method="post")
         ="Create a game: "
+        ="Name:"
         input(type="text", name="name")
+        br
+        input(type="radio", name="player", value="white")="White"
+        br
+        input(type="radio", name="player", value="black")="Black"
+        br
+        input(type="radio", name="player", value="spectator")="Spectator"
+        br
         input(type="submit", value="Create Game")
