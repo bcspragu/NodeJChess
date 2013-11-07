@@ -10,6 +10,16 @@ var UserSchema = new mongoose.Schema({
   password: {
     type: String,
     index: true
+  },
+  elo_rating:{
+    type: Number,
+    default:1000,
+    index:true
+  },
+  games_played:{
+    type: Number,
+    default:0,
+    index:true
   }
 });
 
