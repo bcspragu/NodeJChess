@@ -25,3 +25,19 @@ a {
 .small_margin_left {
 	margin-left:10px;
 }
+
+#new_game {
+  background-color: #F0F0FF;
+  padding: 10px;
+  border: 1px solid black;
+}
+
+.field {
+  display: block;
+  padding: 3px;
+}
+
+.label {
+  display: inline-block;
+  padding: 5px 0px 5px 0px;
+}

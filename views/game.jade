@@ -3,3 +3,7 @@ extends layout
 block content
   .container_16
     #board.grid_10.prefix_2
+    .grid_10.prefix_2
+      b="Black player is " + (black ? black.name : "None")
+      br
+      b="White player is " + (white ? white.name : "None")
