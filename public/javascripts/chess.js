@@ -170,6 +170,7 @@ function Chess(id, fen) {
       }
     }
     c.paper.rect(0,0,width,width,3).attr({'stroke-width': 2, stroke: '#000'});
+    c.draw();
   }
 
 }
