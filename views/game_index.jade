@@ -15,11 +15,22 @@ block content
             td
               a(href="/game/"+game._id)
                 =game.name
-            td=(game.white ? game.white : 'None')
-            td=(game.black ? game.black : 'None')
+            td=(game.white ? game.white.name : 'None')
+            td=(game.black ? game.black.name : 'None')
             td=game.private
-    #new_game.grid_10
+    #new_game.grid_4.prefix_1
       form(name="create_game", action="/create_game", method="post")
-        ="Create a game: "
-        input(type="text", name="name")
-        input(type="submit", value="Create Game")
+        .label="Create a game: "
+        .field
+          ="Name:"
+          input(type="text", name="name")
+        .label="Join as:"
+        .field
+          input(type="radio", name="player", value="white")
+          ="White"
+        .field
+          input(type="radio", name="player", value="black")
+          ="Black"
+        .field
+          input(type="radio", name="player", value="spectator")
+          ="Spectator"
