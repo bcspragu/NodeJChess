@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1.
+    User List
+  table
+        tr
+          th="Player Name"
+          th="Elo Rating"
+          th="Games Played"
+        -for (var i = 0; i < users.length; i++)
+          -var user = users[i]
+          tr   
+            td=user.name
+            td="To Be Determined" 
+            td="To Be Added"

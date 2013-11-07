@@ -21,3 +21,7 @@ a {
 #game_list table th {
   border: 2px solid black;
 }
+
+.small_margin_left {
+	margin-left:10px;
+}

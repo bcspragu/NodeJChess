@@ -28,7 +28,7 @@ db.once('open', function callback () {
 app.set('port', process.env.PORT || 3001);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
-app.use(express.favicon());
+app.use(express.favicon(path.join(__dirname, 'public/images/favicon.ico')));  // Our favicon 
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
@@ -66,7 +66,7 @@ app.get('/login', application.login);
 app.post('/attempt_login', application.attempt_login);
 app.post('/create_account', application.create_account);
 app.get('/logout', application.logout); 
-app.get('/', checkAuth, routes.index); //Checks to see if logged in, if they arn't goes to the checkAuth method
+app.get('/', checkAuth, routes.index); //Checks to see if logged in, if they arn't goes to the checkAuth method , if they are go to the gameList
 app.get('/users', checkAuth, user.list);
 app.post('/create_game', checkAuth, game.create_game)
 app.get('/game/:id', checkAuth, game.show)

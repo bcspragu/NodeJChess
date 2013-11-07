@@ -8,6 +8,6 @@ var mongoose    = require('mongoose'),
 
 exports.index = function(req, res){
   Game.find({}, function(err, games) {
-    res.render('index', { title: 'NodeChess', games: games });
+    res.render('game_index', { title: 'NodeChess', games: games });
   });
 };
