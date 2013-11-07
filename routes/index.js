@@ -7,7 +7,7 @@ var mongoose    = require('mongoose'),
  */
 
 exports.index = function(req, res){
-  Game.find({}, function(err, games) {
+  Game.find({}).populate('white').populate('black').exec(function(err, games) {
     res.render('index', { title: 'NodeChess', games: games });
   });
 };

@@ -1,4 +1,5 @@
-var mongoose = require("mongoose");
+var mongoose = require("mongoose"),
+    user = require("./User");
 
 var GameSchema = new mongoose.Schema({
   name: {
@@ -9,11 +10,13 @@ var GameSchema = new mongoose.Schema({
     type: Boolean
   },
   white: {
-    type: String,
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
     index: true
   },
   black: {
-    type: String,
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
     index: true
   }
 });

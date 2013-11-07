@@ -15,8 +15,8 @@ block content
             td
               a(href="/game/"+game._id)
                 =game.name
-            td=(game.white ? game.white : 'None')
-            td=(game.black ? game.black : 'None')
+            td=(game.white ? game.white.name : 'None')
+            td=(game.black ? game.black.name : 'None')
             td=game.private
     #new_game.grid_4.prefix_1
       form(name="create_game", action="/create_game", method="post")
