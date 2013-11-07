@@ -18,7 +18,9 @@ var GameSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     index: true
-  }
+  },
+  fen: String,
+  moves: [String]
 });
 
 module.exports = mongoose.model('Game', GameSchema);
