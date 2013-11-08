@@ -1,6 +1,12 @@
 extends layout
 
 block content
+  script(type='text/javascript').
+    var socket = io.connect('http://localhost');
+    socket.on('sending shit', function (data) {
+      console.log(data);
+      socket.emit('receiving shit', { my: 'ass'  });
+    });
   .container_16
     #board.grid_10.prefix_2
     .grid_10.prefix_2

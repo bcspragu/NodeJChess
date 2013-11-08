@@ -15,6 +15,9 @@ var mongoose = require('mongoose'),
     Game = require('./models/Game');
 
 var app = express();
+var server = http.createServer(app)
+var io = require('socket.io').listen(server);
+
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
 // database
 mongoose.connect(mongoUri);
@@ -62,6 +65,13 @@ function checkAuth(req, res, next) {
   }
 }
 
+io.sockets.on('connection', function (socket) {
+  socket.emit('sending shit', { things: "and stuff" });
+  socket.on('receiving shit', function (data) {
+    //Do shit
+  });
+});
+
 app.get('/login', application.login); 
 app.post('/attempt_login', application.attempt_login);
 app.post('/create_account', application.create_account);
@@ -71,6 +81,6 @@ app.get('/users', checkAuth, user.list);
 app.post('/create_game', checkAuth, game.create_game)
 app.get('/game/:id', checkAuth, game.show)
 
-http.createServer(app).listen(app.get('port'), function(){
+server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
