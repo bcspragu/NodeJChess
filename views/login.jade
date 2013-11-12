@@ -1,21 +1,28 @@
 extends layout
 
 block content
-  h1.
-    Welcome to NodeChess
-  div.small_margin_left
-    p.
-      Please login:
-    div.loginbox
-      form(name="login", action="/attempt_login", method="post")
-        input(type="text", name="user")
-        input(type="password", name="password")
-        input(type="submit", value="login")
-    p.
-     Or create a new account:
-    div.createbox
-      form(name="create_account", action="/create_account", method="post")
-        input(type="text", name="user")
-        input(type="password", name="password")
-        input(type="submit", value="create")
-    
+  .container_16
+    .grid_9.prefix_2
+      .box
+        img(src='/images/Logo.png')
+        hr
+        .prefix_1
+          p.
+            Please login:
+          div.loginbox
+            form(name="login", action="/attempt_login", method="post")
+              .field
+                input(type="text", placeholder="username", name="user")
+              .field
+                input(type="password", placeholder="password", name="password")
+                input(type="submit", value="login")
+          p.
+           Or create a new account:
+          div.createbox
+            form(name="create_account", action="/create_account", method="post")
+              .field
+                input(type="text", placeholder="username", name="user")
+              .field
+                input(type="password", placeholder="password", name="password")
+                input(type="submit", value="create")
+      
