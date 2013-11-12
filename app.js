@@ -79,8 +79,9 @@ app.get('/logout', application.logout);
 app.get('/', checkAuth, routes.index); //Checks to see if logged in, if they arn't goes to the checkAuth method , if they are go to the gameList
 app.get('/users', checkAuth, user.list);
 app.post('/create_game', checkAuth, game.create_game);
-app.get('/game/:id', checkAuth, game.show);
-app.post('/game/:id/join', checkAuth, game.join);
+app.get('/games/:id', checkAuth, game.show);
+app.post('/games/:id/join', checkAuth, game.join);
+app.get('/games/:id/leave', checkAuth, game.leave);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

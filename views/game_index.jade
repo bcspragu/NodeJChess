@@ -12,12 +12,14 @@ block content
         -for (var i = 0; i < games.length; i++)
           -var game = games[i]
           tr 
-            td=game.name
+            td
+              a(href="/games/"+game._id+"/")
+                =game.name
             td
               -if (game.white)
                 =game.white.name
               -else
-                form(id="myform1"+game._id, method="post", action="/game/"+game._id+"/join")
+                form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
                   input(type="hidden", name="color", value="white")
                   a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
                     ="None"
@@ -25,13 +27,13 @@ block content
               -if (game.black)
                 =game.black.name
               -else
-                form(id="myform2"+game._id, method="post", action="/game/"+game._id+"/join")
+                form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
                   input(type="hidden", name="color", value="black")
                   a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
                     ="None"
             td=game.private
     #new_game.grid_4.prefix_1
-      form(name="create_game", action="/create_game", method="post")
+      form(name="create_game", action="/games/create", method="post")
         .label="Create a game: "
         .field
           ="Name:"
