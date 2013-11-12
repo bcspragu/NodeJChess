@@ -31,20 +31,20 @@ block content
                 a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
                   ="None"
           td=game.private
-  #new_game.grid_4.prefix_1
+  #new_game.grid_4
     form(name="create_game", action="/games/create", method="post")
       .label="Create a game: "
       .field
-        ="Name:"
+        ="Name: "
         input(type="text", name="name")
       .label="Join as:"
       .field
         input(type="radio", name="player", value="white")
-        ="White"
+        =" White"
       .field
         input(type="radio", name="player", value="black")
-        ="Black"
+        =" Black"
       .field
         input(type="radio", name="player", value="spectator")
-        ="Spectator"
+        =" Spectator"
       input(type="submit", value="Create Game")

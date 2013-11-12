@@ -41,11 +41,18 @@ app.use(express.session());
 //builds breadcrumbs in nav bar
 function buildBreadCrumbs(url) {
   var breadcrumbs = [];
+  //splits url
   var url_bits = url.split("/");
+  //url_bits[0] is always blank
+  //check first part
   if (url_bits[1]) {
+    //if it's 'games'...
     if (url_bits[1] == "games") {
+      //push a link with the text "Games" leading to "/games/"
       breadcrumbs.push(["Games", "/games/"]);
+      //check second part (if first part is "/games/", then second part would be game id)
       if (url_bits[2])
+        //add game id
         breadcrumbs.push([url_bits[2], "/games/"+url_bits[2]]);
     }
   }
