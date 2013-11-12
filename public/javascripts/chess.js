@@ -87,6 +87,8 @@ function Chess(id, fen) {
         }else{
           c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos()});
         }
+        var game_id = $('.game_board').attr('id');
+        $.post('/games/'+game_id+'/move',{fen: c.logic.fen()});
         c.draw();
         var column = cell.boardPos().charCodeAt(0)-97;
         var row = parseInt(8-cell.boardPos().charAt(1));

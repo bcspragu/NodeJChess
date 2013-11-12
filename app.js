@@ -87,13 +87,6 @@ function checkAuth(req, res, next) {
   }
 }
 
-io.sockets.on('connection', function (socket) {
-  socket.emit('sending shit', { things: "and stuff" });
-  socket.on('receiving shit', function (data) {
-    //Do shit
-  });
-});
-
 app.get('/login', application.login); 
 app.post('/attempt_login', application.attempt_login);
 app.post('/create_account', application.create_account);
@@ -103,9 +96,10 @@ app.get('/logout', application.logout);
 app.get('/', checkAuth, routes.index);
 app.get('/games', checkAuth, routes.index)
 app.get('/users', checkAuth, user.list);
-app.post('/create_game', checkAuth, game.create_game);
+app.post('/games/create', checkAuth, game.create_game);
 app.get('/games/:id', checkAuth, game.show);
 app.post('/games/:id/join', checkAuth, game.join);
+app.post('/games/:id/move', checkAuth, game.move);
 app.get('/games/:id/leave', checkAuth, game.leave);
 
 server.listen(app.get('port'), function(){

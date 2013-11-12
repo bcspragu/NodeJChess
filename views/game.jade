@@ -2,14 +2,16 @@ extends layout
 
 block content
   script(type='text/javascript').
-    var socket = io.connect('http://localhost');
-    socket.on('sending shit', function (data) {
-      console.log(data);
-      socket.emit('receiving shit', { my: 'ass'  });
+    $(function(){
+      var game_id = "!{game._id}";
+      var fen = "!{game.fen}";
+      new Chess(game_id,fen);
     });
   .grid_10.prefix_2
-    h2="Game: "+game.name
-    #board
+    h2
+      #game_title="Game: "+game.name
+      #game_turn Current Turn: White
+    div(id=game._id).game_board
     b
       -if(game.black)
         p

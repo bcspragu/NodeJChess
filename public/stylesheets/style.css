@@ -111,3 +111,11 @@ a {
 #user_status {
   padding-top: 8px;
 }
+
+#game_title{
+  float: left;
+}
+
+#game_turn{
+  float: right;
+}

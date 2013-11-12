@@ -5,15 +5,18 @@ var mongoose    = require('mongoose'),
 exports.create_game = function(req, res) {
   var post = req.body;
   var game = new Game({name: post.name});
-  if (post.player == "white")
+  if (post.player == "white"){
     game.white = res.locals.current_user._id
-  if (post.player == "black")
+  }
+  if (post.player == "black"){
     game.black = res.locals.current_user._id
+  }
+  game.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   game.save(function (err, g) {
     if (err)
       res.send('An error has occurred');
     else {
-      res.redirect('/game/'+g._id);
+      res.redirect('/games/'+g._id);
     }
   });
 }
@@ -61,4 +64,21 @@ exports.leave = function(req, res) {
       }
     });
   });
+}
+
+exports.move = function(req,res) {
+  var post = req.body;
+  Game.findById(req.params.id).exec(function(err, game) {
+    //TODO Add checking to make sure it's the right person's move
+    game.past_fen.push(game.fen);
+    game.fen = post.fen;
+    console.log('saved with fen: '+post.fen);
+    game.save(function(err, g) {
+      if (err){
+        res.send(500);
+        return;
+      }
+    });
+  });
+  res.send(200);
 }
