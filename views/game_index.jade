@@ -3,7 +3,7 @@ extends layout
 block content
   .container_16
     #game_list.grid_10
-      table
+      table.striped_table
         tr
           th="Game Name"
           th="White Player"
@@ -12,11 +12,23 @@ block content
         -for (var i = 0; i < games.length; i++)
           -var game = games[i]
           tr 
+            td=game.name
             td
-              a(href="/game/"+game._id)
-                =game.name
-            td=(game.white ? game.white.name : 'None')
-            td=(game.black ? game.black.name : 'None')
+              -if (game.white)
+                =game.white.name
+              -else
+                form(id="myform1"+game._id, method="post", action="/game/"+game._id+"/join")
+                  input(type="hidden", name="color", value="white")
+                  a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
+                    ="None"
+            td
+              -if (game.black)
+                =game.black.name
+              -else
+                form(id="myform2"+game._id, method="post", action="/game/"+game._id+"/join")
+                  input(type="hidden", name="color", value="black")
+                  a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
+                    ="None"
             td=game.private
     #new_game.grid_4.prefix_1
       form(name="create_game", action="/create_game", method="post")
@@ -34,3 +46,4 @@ block content
         .field
           input(type="radio", name="player", value="spectator")
           ="Spectator"
+        input(type="submit", value="Create Game")

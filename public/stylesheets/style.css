@@ -13,15 +13,6 @@ a {
   padding-bottom: 10px;
 }
 
-#game_list table{
-  border: 2px solid black;
-  width: 100%;
-}
-
-#game_list table th {
-  border: 2px solid black;
-}
-
 .small_margin_left {
 	margin-left:10px;
 }
@@ -48,4 +39,26 @@ a {
   border: 1px solid #00008B;
   padding: 10px;
   background-color: #F2F2F2;
+}
+
+.striped_table {
+  width: 100%;
+  border: 1px solid black;
+  border-spacing: 0px;
+}
+
+.striped_table th {
+  border-bottom: 1px solid #888;
+  padding: 6px;
+}
+
+.striped_table td { 
+  line-height: 1.428571429;
+  vertical-align: top;
+  padding:6px;
+  border-top: 1px solid #ddd;
+}
+
+.striped_table tr:nth-child(odd)> td {
+  background-color: #f9f9f9;
 }
