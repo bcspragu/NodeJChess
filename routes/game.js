@@ -47,9 +47,6 @@ exports.join = function(req,res) {
 exports.leave = function(req, res) {
   var post = req.body;
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
-    console.log(res.locals);
-    console.log(game.white);
-    console.log(game.black);
     if (game.white && res.locals.current_user.id == game.white._id)
       game.white = undefined;
     if (game.black && res.locals.current_user.id == game.black._id)

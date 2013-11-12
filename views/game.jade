@@ -7,23 +7,23 @@ block content
       console.log(data);
       socket.emit('receiving shit', { my: 'ass'  });
     });
-  .container_16
-    #board.grid_10.prefix_2
-    .grid_10.prefix_2
-      b
-        ="Black player is: "
-        -if(game.black && game.black._id == current_user.id) 
-          =game.black.name+" "
-          a(href="/games/'+game._id+'/leave")
-            ="(quit)"
-        -else
-          =(game.black ? game.black.name : "None")
-      br
-      b
-        ="White player is: "
-        -if(game.white && game.white._id == current_user.id) 
-          =game.white.name+" "
-          a(href="/games/"+game._id+"/leave")
-            ="(quit)"
-        -else
-          =(game.black ? game.white.name : "None")
+  .grid_10.prefix_2
+    h2="Game: "+game.name
+    #board
+    b
+      ="Black player is: "
+      -if(game.black && game.black._id == current_user.id) 
+        =game.black.name+" "
+        a(href="/games/"+game._id+"/leave")
+          ="(quit)"
+      -else
+        =(game.black ? game.black.name : "None")
+    br
+    b
+      ="White player is: "
+      -if(game.white && game.white._id == current_user.id) 
+        =game.white.name+" "
+        a(href="/games/"+game._id+"/leave")
+          ="(quit)"
+      -else
+        =(game.white ? game.white.name : "None")

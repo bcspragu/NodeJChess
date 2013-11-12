@@ -38,8 +38,24 @@ app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
 
+//builds breadcrumbs in nav bar
+function buildBreadCrumbs(url) {
+  var breadcrumbs = [];
+  var url_bits = url.split("/");
+  if (url_bits[1]) {
+    if (url_bits[1] == "games") {
+      breadcrumbs.push(["Games", "/games/"]);
+      if (url_bits[2])
+        breadcrumbs.push([url_bits[2], "/games/"+url_bits[2]]);
+    }
+  }
+  return breadcrumbs;
+}
+
+//run before every request is handled
 app.configure(function(){
   app.use(function(req, res, next){
+    res.locals.breadcrumbs = buildBreadCrumbs(req.url);
     var id = mongoose.Types.ObjectId(req.session.user_id);
     User.findById(id, function(err, cur_user) {
       if (cur_user != undefined)
@@ -56,7 +72,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
-
 function checkAuth(req, res, next) {
   if (!req.session.user_id) {
     res.redirect('/login');
@@ -76,7 +91,10 @@ app.get('/login', application.login);
 app.post('/attempt_login', application.attempt_login);
 app.post('/create_account', application.create_account);
 app.get('/logout', application.logout); 
-app.get('/', checkAuth, routes.index); //Checks to see if logged in, if they arn't goes to the checkAuth method , if they are go to the gameList
+
+//These actions are protected by login system, checkAuth
+app.get('/', checkAuth, routes.index);
+app.get('/games', checkAuth, routes.index)
 app.get('/users', checkAuth, user.list);
 app.post('/create_game', checkAuth, game.create_game);
 app.get('/games/:id', checkAuth, game.show);

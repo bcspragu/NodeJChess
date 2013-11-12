@@ -8,9 +8,11 @@ a {
 }
 
 .header {
+  height: 63px;
   font-size: 10px;
   width: 100%;
   padding-bottom: 10px;
+  overflow:hidden;
 }
 
 .small_margin_left {
@@ -61,4 +63,42 @@ a {
 
 .striped_table tr:nth-child(odd)> td {
   background-color: #f9f9f9;
+}
+
+.left {
+  float:left;
+}
+
+.right {
+  float:right;
+}
+
+#breadcrumbs {
+  padding-top: 8px;
+}
+
+#breadcrumbs ul
+{
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+#breadcrumbs ul li
+{
+  display:inline;
+  background-image: url(/images/right.gif);
+  background-repeat: no-repeat;
+  background-position:1px 1px; 
+  padding-left: 20px;
+  font-size: 14px; 
+}
+
+#breadcrumbs ul li a
+{
+  color: #000;
+}
+
+#user_status {
+  padding-top: 10px;
 }

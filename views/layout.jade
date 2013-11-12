@@ -11,8 +11,19 @@ html
     script(src='/javascripts/chess.js')
     script(src='/javascripts/board.js')
   body
-    -if (current_user != undefined)
-      .header
-        b="You are logged in as "+ current_user.name+" "
-        a(href="/logout")="(Logout)"
-    block content
+    .container_16
+      .header.box
+        a(href="/").left
+          img(src="/images/mini-logo.png")
+        #breadcrumbs.left
+          ul
+            -for (var i = 0; i < breadcrumbs.length; i++)
+              -crumb = breadcrumbs[i];
+              li
+                a(href=crumb[1])
+                  =crumb[0]
+        -if (current_user != undefined)
+          #user_status.right
+            b="You are logged in as "+ current_user.name+" "
+            a(href="/logout")="(Logout)"
+      block content

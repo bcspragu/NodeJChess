@@ -16,7 +16,7 @@ exports.attempt_login = function (req, res) {
       user.comparePassword(post.password, function(err, isMatch) {
         if (isMatch) {
           req.session.user_id = user._id;
-          res.redirect('/');
+          res.redirect('/games/');
         }
         else
           res.send('Bad Password');
