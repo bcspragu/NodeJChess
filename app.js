@@ -53,7 +53,7 @@ function buildBreadCrumbs(url) {
       //check second part (if first part is "/games/", then second part would be game id)
       if (url_bits[2])
         //add game id
-        breadcrumbs.push([url_bits[2], "/games/"+url_bits[2]]);
+        breadcrumbs.push([url_bits[2].substring(0,8)+"...", "/games/"+url_bits[2]]);
     }
   }
   return breadcrumbs;
