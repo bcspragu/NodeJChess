@@ -11,19 +11,35 @@ block content
     h2="Game: "+game.name
     #board
     b
-      ="Black player is: "
-      -if(game.black && game.black._id == current_user.id) 
-        =game.black.name+" "
-        a(href="/games/"+game._id+"/leave")
-          ="(quit)"
+      -if(game.black)
+        p
+          ="Black: "
+          -if (game.black._id == current_user.id) 
+            =game.black.name+" "
+            a(href="/games/"+game._id+"/leave")
+              ="(quit)"
+          -else
+            =game.black.name
       -else
-        =(game.black ? game.black.name : "None")
-    br
+        form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
+          ="Black: None "
+          input(type="hidden", name="color", value="black")
+          a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
+            ="(join)"
     b
-      ="White player is: "
-      -if(game.white && game.white._id == current_user.id) 
-        =game.white.name+" "
-        a(href="/games/"+game._id+"/leave")
-          ="(quit)"
+      -if(game.white)
+        p
+          ="White: "
+          -if (game.white._id == current_user.id)
+            =game.white.name+" "
+            a(href="/games/"+game._id+"/leave")
+              ="(quit)"
+          -else
+            =game.white.name
       -else
-        =(game.white ? game.white.name : "None")
+        form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
+          ="White: None "
+          input(type="hidden", name="color", value="white")
+          a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
+            ="(join)"
+
