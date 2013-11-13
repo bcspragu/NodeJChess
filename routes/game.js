@@ -25,6 +25,8 @@ exports.create_game = function(req, res) {
 exports.show = function(req, res) {
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, g) {
     res.locals.game = g;
+    res.locals.white_id = typeof g.white === "undefined" ? "" : g.white._id.toHexString();
+    res.locals.black_id = typeof g.black === "undefined" ? "" : g.black._id.toHexString();
     res.render('game', { title: 'NodeChess - Game' });
   });
 }

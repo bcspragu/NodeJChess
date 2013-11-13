@@ -5,8 +5,8 @@ block content
     $(function(){
       var game_id = "!{game._id}";
       var fen = "!{game.fen}";
-      var white = !{game.white._id.toHexString() === current_user._id.toHexString() ? "'w'" : false};
-      var black = !{game.black._id.toHexString() === current_user._id.toHexString() ? "'b'" : false};
+      var white = !{white_id === current_user._id.toHexString() ? "'w'" : false};
+      var black = !{black_id === current_user._id.toHexString() ? "'b'" : false};
       var spectator = 's';
       var player_color = white || black || spectator;
       new Chess(game_id, player_color, fen);
