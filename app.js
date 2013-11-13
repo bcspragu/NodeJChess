@@ -38,6 +38,14 @@ app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
 
+//If we aren't in development, we're on heroku and need to use long polling
+if ('development' != app.get('env')) {
+  io.configure(function () {
+    io.set("transports", ["xhr-polling"]);
+    io.set("polling duration", 10);
+  });
+}
+
 //builds breadcrumbs in nav bar
 function buildBreadCrumbs(url) {
   var breadcrumbs = [];
