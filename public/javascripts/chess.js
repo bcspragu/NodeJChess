@@ -1,6 +1,9 @@
-function Chess(id, fen) {
+function Chess(id, player_color, fen) {
   var c = this;
   var board = $('#'+id);
+  var socket = io.connect('http://localhost');
+
+  c.socket = socket;
   c.valid = board.length == 1;
   c.currentPiece = null;
   c.pieceList = []; //Array to hold all the pieces on the board
@@ -89,6 +92,7 @@ function Chess(id, fen) {
         }
         var game_id = $('.game_board').attr('id');
         $.post('/games/'+game_id+'/move',{fen: c.logic.fen()});
+        c.socket.emit('move',{fen: c.logic.fen(), id: id});
         c.draw();
         var column = cell.boardPos().charCodeAt(0)-97;
         var row = parseInt(8-cell.boardPos().charAt(1));
@@ -96,7 +100,7 @@ function Chess(id, fen) {
         c.unhighlightAll();
       }
       //If there is a piece on that cell and it's their turn
-      if(c.logic.get(board_loc) && c.logic.turn() === c.logic.get(board_loc).color){
+      if(c.logic.get(board_loc) && c.logic.turn() === c.logic.get(board_loc).color && c.logic.turn() === player_color){
         c.unhighlightAll();
         c.highlightMoves(c.logic.moves({square: board_loc, verbose: true}));
         c.currentPiece = cell;
@@ -151,6 +155,14 @@ function Chess(id, fen) {
       }
     }
   }
+
+  c.socket.on(id+'/move', function (data) {
+    var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
+    $('#game_turn').text("Current Turn: "+pc);
+
+    c.logic.load(data.fen);
+    c.draw();
+  });
 
   if(c.valid){
     if(fen){

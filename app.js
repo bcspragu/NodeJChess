@@ -16,16 +16,16 @@ var mongoose = require('mongoose'),
 
 var app = express();
 var server = http.createServer(app)
-var io = require('socket.io').listen(server);
+  var io = require('socket.io').listen(server);
 
-var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
-// database
-mongoose.connect(mongoUri);
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function callback () {
-  console.log("connected to mongodb");
-});
+  var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
+  // database
+  mongoose.connect(mongoUri);
+  var db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'connection error:'));
+  db.once('open', function callback () {
+    console.log("connected to mongodb");
+  });
 
 // all environments
 app.set('port', process.env.PORT || 3001);
@@ -74,8 +74,8 @@ app.configure(function(){
     var id = mongoose.Types.ObjectId(req.session.user_id);
     User.findById(id, function(err, cur_user) {
       if (cur_user != undefined)
-        res.locals.current_user = cur_user;
-      next();
+      res.locals.current_user = cur_user;
+    next();
     });
   });
 });
@@ -112,4 +112,10 @@ app.get('/games/:id/leave', checkAuth, game.leave);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
+});
+
+io.sockets.on('connection',function(socket){
+  socket.on('move',function(data){
+    socket.broadcast.emit(data.id+'/move', {fen: data.fen});
+  });
 });

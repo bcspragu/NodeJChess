@@ -119,3 +119,15 @@ a {
 #game_turn{
   float: right;
 }
+
+#black_player{
+  float: left;
+}
+
+#white_player{
+  float: right;
+}
+
+.game_board{
+  padding-bottom: 10px;
+}

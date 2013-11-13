@@ -5,16 +5,20 @@ block content
     $(function(){
       var game_id = "!{game._id}";
       var fen = "!{game.fen}";
-      new Chess(game_id,fen);
+      var white = !{game.white._id.toHexString() === current_user._id.toHexString() ? "'w'" : false};
+      var black = !{game.black._id.toHexString() === current_user._id.toHexString() ? "'b'" : false};
+      var spectator = 's';
+      var player_color = white || black || spectator;
+      new Chess(game_id, player_color, fen);
     });
   .grid_10.prefix_2
     h2
-      #game_title="Game: "+game.name
-      #game_turn Current Turn: White
+      #game_title="Game: " + game.name
+      #game_turn="Current Turn: " + (game.fen.split(' ')[1] === 'b' ? "Black" : "White")
     div(id=game._id).game_board
-    b
-      -if(game.black)
-        p
+    h3
+      #black_player
+        -if(game.black)
           ="Black: "
           -if (game.black._id == current_user.id) 
             =game.black.name+" "
@@ -22,15 +26,14 @@ block content
               ="(quit)"
           -else
             =game.black.name
-      -else
-        form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
-          ="Black: None "
-          input(type="hidden", name="color", value="black")
-          a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
-            ="(join)"
-    b
-      -if(game.white)
-        p
+        -else
+          form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
+            ="Black: None "
+            input(type="hidden", name="color", value="black")
+            a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
+              ="(join)"
+      #white_player
+        -if(game.white)
           ="White: "
           -if (game.white._id == current_user.id)
             =game.white.name+" "
@@ -38,9 +41,9 @@ block content
               ="(quit)"
           -else
             =game.white.name
-      -else
-        form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
-          ="White: None "
-          input(type="hidden", name="color", value="white")
-          a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
-            ="(join)"
+        -else
+          form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
+            ="White: None "
+            input(type="hidden", name="color", value="white")
+            a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
+              ="(join)"
