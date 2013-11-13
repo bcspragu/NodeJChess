@@ -73,9 +73,11 @@ app.configure(function(){
     res.locals.breadcrumbs = buildBreadCrumbs(req.url);
     var id = mongoose.Types.ObjectId(req.session.user_id);
     User.findById(id, function(err, cur_user) {
-      if (cur_user != undefined)
-      res.locals.current_user = cur_user;
-    next();
+      //I don't know what this does, I added braces
+      if (cur_user != undefined){
+        res.locals.current_user = cur_user;
+      }
+      next();
     });
   });
 });
@@ -87,6 +89,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
+
 function checkAuth(req, res, next) {
   if (!req.session.user_id) {
     res.redirect('/login');
