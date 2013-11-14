@@ -5,7 +5,26 @@ function Chess(id) {
   c.currentPiece = null;
   c.pieceList = []; //Array to hold all the pieces on the board
 
-  c.draw = function(){
+  c.movePiece = function(from, to){
+    var pieceToMove;
+    for(var i = 0; i < c.pieceList.length; i++){
+      if(c.pieceList[i].boardPos() === from){
+        pieceToMove = c.pieceList[i];
+        break;
+      }
+    }
+    var padding = c.cell_size*0.1;
+    var column = to.charCodeAt(0)-97;
+    var row = parseInt(8-to.charAt(1));
+    var xloc = column*c.cell_size + padding;
+    var yloc = row*c.cell_size + padding;
+    pieceToMove.attr({x: xloc, y: yloc});
+    pieceToMove.boardPos = function(){
+      return to;
+    }
+  }
+
+  c.drawInitial = function(){
     if(c.valid){
       //Clear all the pieces from our array
       for(var i = 0; i < c.pieceList.length; i++){
@@ -87,8 +106,7 @@ function Chess(id) {
         }else{
           c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos()});
         }
-        $.post('/games/'+id+'/move',{fen: c.logic.fen()});
-        c.socket.emit('move',{fen: c.logic.fen(), id: id});
+        $.post('/games/'+id+'/move',{fen: c.logic.fen(), from: c.currentPiece.boardPos(), to: cell.boardPos()});
         var column = cell.boardPos().charCodeAt(0)-97;
         var row = parseInt(8-cell.boardPos().charAt(1));
         c.currentPiece = null;
@@ -132,9 +150,13 @@ function Chess(id) {
     var xloc = column*c.cell_size + padding;
     var yloc = row*c.cell_size + padding;
     var piece = c.paper.image('/images/pieces/'+piece+'.png', xloc, yloc, size, size);
+    var pos = c.cells[column][row].boardPos();
     piece.click(c.cells[column][row].c_click);
     piece.mouseover(c.cells[column][row].c_mouseover);
     piece.mouseout(c.cells[column][row].c_mouseout);
+    piece.boardPos = function(){
+      return pos;
+    }
     c.pieceList.push(piece);
   }
 
@@ -177,14 +199,14 @@ function Chess(id) {
         }
       }
       c.paper.rect(0,0,width,width,3).attr({'stroke-width': 2, stroke: '#000'});
-      c.draw();
+      c.drawInitial();
 
       c.socket.on(id+'/move', function (data) {
         var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
         $('#game_turn').text("Current Turn: "+pc);
 
         c.logic.load(data.fen);
-        c.draw();
+        c.movePiece(data.from, data.to);
       });
 
     },'json');
