@@ -15,17 +15,17 @@ var mongoose = require('mongoose'),
     Game = require('./models/Game');
 
 app = express();
-var server = http.createServer(app)
-  var io = require('socket.io').listen(server);
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 
-  var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
-  // database
-  mongoose.connect(mongoUri);
-  var db = mongoose.connection;
-  db.on('error', console.error.bind(console, 'connection error:'));
-  db.once('open', function callback () {
-    console.log("connected to mongodb");
-  });
+var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
+// database
+mongoose.connect(mongoUri);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+  console.log("connected to mongodb");
+});
 
 // all environments
 app.set('port', process.env.PORT || 3001);
