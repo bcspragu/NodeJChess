@@ -5,6 +5,15 @@ function Chess(id) {
   c.currentPiece = null;
   c.pieceList = []; //Array to hold all the pieces on the board
 
+  c.changePiece = function(board_loc, piece){
+    for(var i = 0; i < c.pieceList.length; i++){
+      if(c.pieceList[i].boardPos() === board_loc){
+        c.pieceList[i].attr({src: '/images/pieces/'+piece+'.png'});
+        return;
+      }
+    }
+  }
+
   c.movePiece = function(from, to){
     var pieceToMove;
     for(var i = 0; i < c.pieceList.length; i++){
@@ -13,7 +22,18 @@ function Chess(id) {
         break;
       }
     }
+
+    for(var i = 0; i < c.pieceList.length; i++){
+      if(c.pieceList[i].boardPos() === to){
+          c.pieceList[i].remove();
+          c.pieceList.splice(i,1);
+          break;
+        }
+    }
+
     var padding = c.cell_size*0.1;
+    var from_column = from.charCodeAt(0)-97;
+    var from_row = parseInt(8-from.charAt(1));
     var column = to.charCodeAt(0)-97;
     var row = parseInt(8-to.charAt(1));
     var xloc = column*c.cell_size + padding;
@@ -22,6 +42,14 @@ function Chess(id) {
     pieceToMove.boardPos = function(){
       return to;
     }
+    pieceToMove.unclick(c.cells[from_column][from_row].c_click);
+    pieceToMove.click(c.cells[column][row].c_click);
+
+    pieceToMove.unmouseover(c.cells[from_column][from_row].c_mouseover);
+    pieceToMove.mouseover(c.cells[column][row].c_mouseover);
+
+    pieceToMove.unmouseout(c.cells[from_column][from_row].c_mouseout);
+    pieceToMove.mouseout(c.cells[column][row].c_mouseout);
   }
 
   c.drawInitial = function(){
@@ -99,14 +127,15 @@ function Chess(id) {
     cell.c_click = function(){
       var board_loc = cell.boardPos();
       //If we select a highlighted cell
+      var promotion = '';
       if(cell.data('highlighted')){
         if(cell.data('promotion')){
-          var promotion = prompt('What would you like to promote to? (q,r,b,n)');
+          promotion = prompt('What would you like to promote to? (q,r,b,n)');
           c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos(), promotion: promotion});
         }else{
           c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos()});
         }
-        $.post('/games/'+id+'/move',{fen: c.logic.fen(), from: c.currentPiece.boardPos(), to: cell.boardPos()});
+        $.post('/games/'+id+'/move',{fen: c.logic.fen(), from: c.currentPiece.boardPos(), to: cell.boardPos(), promotion: promotion});
         var column = cell.boardPos().charCodeAt(0)-97;
         var row = parseInt(8-cell.boardPos().charAt(1));
         c.currentPiece = null;
@@ -173,7 +202,6 @@ function Chess(id) {
     }
   }
 
-
   if(c.valid){
     //Load the game
     $.post('/games/'+id+'/info',function(data){
@@ -207,6 +235,13 @@ function Chess(id) {
 
         c.logic.load(data.fen);
         c.movePiece(data.from, data.to);
+        if(data.promotion !== ''){
+          if(pc === 'Black'){
+            data.promotion = data.promotion.toUpperCase();
+          }
+          c.changePiece(data.to, data.promotion);
+        }
+
       });
 
     },'json');
