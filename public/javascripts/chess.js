@@ -88,7 +88,6 @@ function Chess(id) {
           c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos()});
         }
         $.post('/games/'+id+'/move',{fen: c.logic.fen()});
-        c.socket.emit('move',{fen: c.logic.fen(), id: id});
         var column = cell.boardPos().charCodeAt(0)-97;
         var row = parseInt(8-cell.boardPos().charAt(1));
         c.currentPiece = null;

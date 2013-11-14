@@ -16,7 +16,7 @@ var mongoose = require('mongoose'),
 
 app = express();
 var server = http.createServer(app)
-  var io = require('socket.io').listen(server);
+io = require('socket.io').listen(server);
 
   var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
   // database
@@ -116,10 +116,4 @@ app.get('/games/:id/leave', checkAuth, game.leave);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
-});
-
-io.sockets.on('connection',function(socket){
-  socket.on('move',function(data){
-    io.sockets.emit(data.id+'/move', {fen: data.fen});
-  });
 });

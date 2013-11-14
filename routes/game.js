@@ -80,6 +80,7 @@ exports.move = function(req,res) {
       }
     });
   });
+  io.sockets.emit(req.params.id+'/move', {fen: post.fen});
   res.send(200);
 }
 
