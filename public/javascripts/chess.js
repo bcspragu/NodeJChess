@@ -1,10 +1,7 @@
-function Chess(id, player_color, fen) {
+function Chess(id) {
   var c = this;
-  var board = $('#'+id);
-  var socket = io.connect('http://localhost');
-
-  c.socket = socket;
-  c.valid = board.length == 1;
+  c.board = $('#'+id);
+  c.valid = c.board.length == 1;
   c.currentPiece = null;
   c.pieceList = []; //Array to hold all the pieces on the board
 
@@ -90,17 +87,15 @@ function Chess(id, player_color, fen) {
         }else{
           c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos()});
         }
-        var game_id = $('.game_board').attr('id');
-        $.post('/games/'+game_id+'/move',{fen: c.logic.fen()});
+        $.post('/games/'+id+'/move',{fen: c.logic.fen()});
         c.socket.emit('move',{fen: c.logic.fen(), id: id});
-        c.draw();
         var column = cell.boardPos().charCodeAt(0)-97;
         var row = parseInt(8-cell.boardPos().charAt(1));
         c.currentPiece = null;
         c.unhighlightAll();
       }
       //If there is a piece on that cell and it's their turn
-      if(c.logic.get(board_loc) && c.logic.turn() === c.logic.get(board_loc).color && c.logic.turn() === player_color){
+      if(c.logic.get(board_loc) && c.logic.turn() === c.logic.get(board_loc).color && c.logic.turn() === c.player_color){
         c.unhighlightAll();
         c.highlightMoves(c.logic.moves({square: board_loc, verbose: true}));
         c.currentPiece = cell;
@@ -156,35 +151,43 @@ function Chess(id, player_color, fen) {
     }
   }
 
-  c.socket.on(id+'/move', function (data) {
-    var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
-    $('#game_turn').text("Current Turn: "+pc);
-
-    c.logic.load(data.fen);
-    c.draw();
-  });
 
   if(c.valid){
-    if(fen){
-      c.logic = new ChessLogic(fen);
-    }else {
-      c.logic = new ChessLogic();
-    }
-    var width = board.width();
-    c.cell_size = width/8;
-    board.height(width);         //Make the board square
-    c.paper = Raphael(board.get(0),width,width);
-    c.cells = new Array(8);
-    for(var i = 0; i < 8; i++){
-      c.cells[i] = new Array(8);
-    }
-    for(var x = 0; x < 8; x++){
-      for(var y = 0; y < 8; y++){
-        c.cells[x][y] = c.chessCell(x,y);
+    //Load the game
+    $.post('/games/'+id+'/info',function(data){
+      if(data.env === 'development'){
+        c.socket = io.connect('http://localhost');
+      }else{
+        c.socket = io.connect('http://infinite-wave-1213.herokuapp.com');
       }
-    }
-    c.paper.rect(0,0,width,width,3).attr({'stroke-width': 2, stroke: '#000'});
-    c.draw();
+      c.player_color = data.player_color;
+      c.start_fen = data.fen;
+      c.logic = new ChessLogic(c.start_fen);
+      var width = c.board.width();
+      c.cell_size = width/8;
+      c.board.height(width);         //Make the board square
+      c.paper = Raphael(c.board.get(0),width,width);
+      c.cells = new Array(8);
+      for(var i = 0; i < 8; i++){
+        c.cells[i] = new Array(8);
+      }
+      for(var x = 0; x < 8; x++){
+        for(var y = 0; y < 8; y++){
+          c.cells[x][y] = c.chessCell(x,y);
+        }
+      }
+      c.paper.rect(0,0,width,width,3).attr({'stroke-width': 2, stroke: '#000'});
+      c.draw();
+
+      c.socket.on(id+'/move', function (data) {
+        var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
+        $('#game_turn').text("Current Turn: "+pc);
+
+        c.logic.load(data.fen);
+        c.draw();
+      });
+
+    },'json');
   }
 
 }

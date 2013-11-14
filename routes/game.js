@@ -25,8 +25,6 @@ exports.create_game = function(req, res) {
 exports.show = function(req, res) {
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, g) {
     res.locals.game = g;
-    res.locals.white_id = typeof g.white === "undefined" ? "" : g.white._id.toHexString();
-    res.locals.black_id = typeof g.black === "undefined" ? "" : g.black._id.toHexString();
     res.render('game', { title: 'NodeChess - Game' });
   });
 }
@@ -83,4 +81,18 @@ exports.move = function(req,res) {
     });
   });
   res.send(200);
+}
+
+exports.info = function(req, res) {
+  Game.findById(req.params.id).populate('white').populate('black').exec(function(err, g) {
+    var player_color;
+    if(g.white && g.white._id.toHexString() === res.locals.current_user._id.toHexString()){
+      player_color = 'w';
+    }else if(g.black && g.black._id.toHexString() === res.locals.current_user._id.toHexString()){
+      player_color = 'b';
+    }else{
+      player_color = 's';
+    }
+    res.json({player_color: player_color, fen: g.fen, env: app.get('env')});
+  });
 }

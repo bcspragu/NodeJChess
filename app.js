@@ -14,7 +14,7 @@ var mongoose = require('mongoose'),
     User = require('./models/User'),
     Game = require('./models/Game');
 
-var app = express();
+app = express();
 var server = http.createServer(app)
   var io = require('socket.io').listen(server);
 
@@ -111,6 +111,7 @@ app.post('/games/create', checkAuth, game.create_game);
 app.get('/games/:id', checkAuth, game.show);
 app.post('/games/:id/join', checkAuth, game.join);
 app.post('/games/:id/move', checkAuth, game.move);
+app.post('/games/:id/info', checkAuth, game.info);
 app.get('/games/:id/leave', checkAuth, game.leave);
 
 server.listen(app.get('port'), function(){
@@ -119,6 +120,6 @@ server.listen(app.get('port'), function(){
 
 io.sockets.on('connection',function(socket){
   socket.on('move',function(data){
-    socket.broadcast.emit(data.id+'/move', {fen: data.fen});
+    io.sockets.emit(data.id+'/move', {fen: data.fen});
   });
 });

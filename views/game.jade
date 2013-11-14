@@ -1,16 +1,6 @@
 extends layout
 
 block content
-  script(type='text/javascript').
-    $(function(){
-      var game_id = "!{game._id}";
-      var fen = "!{game.fen}";
-      var white = !{white_id === current_user._id.toHexString() ? "'w'" : false};
-      var black = !{black_id === current_user._id.toHexString() ? "'b'" : false};
-      var spectator = 's';
-      var player_color = white || black || spectator;
-      new Chess(game_id, player_color, fen);
-    });
   .grid_10.prefix_2
     h2
       #game_title="Game: " + game.name
