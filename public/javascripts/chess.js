@@ -133,11 +133,11 @@ function Chess(id) {
       if(cell.data('highlighted')){
         if(cell.data('promotion')){
           promotion = prompt('What would you like to promote to? (q,r,b,n)');
-          c.logic.move({from: cell.data('move').from, to: cell.data('move').to, promotion: promotion});
+          var move = c.logic.move({from: cell.data('move').from, to: cell.data('move').to, promotion: promotion});
         }else{
-          c.logic.move(cell.data('move').san);
+          var move = c.logic.move(cell.data('move').san);
         }
-        $.post('/games/'+id+'/move',{fen: c.logic.fen(), move: cell.data('move')});
+        $.post('/games/'+id+'/move',{fen: c.logic.fen(), move: move});
         var column = cell.boardPos().charCodeAt(0)-97;
         var row = parseInt(8-cell.boardPos().charAt(1));
         c.currentPiece = null;
@@ -243,7 +243,8 @@ function Chess(id) {
           if(pc === 'Black'){
             data.move.promotion = data.move.promotion.toUpperCase();
           }
-          c.changePiece(data.to, data.move.promotion);
+          debugger;
+          c.changePiece(data.move.to, data.move.promotion);
         }
 
       });
