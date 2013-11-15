@@ -14,17 +14,17 @@ function Chess(id) {
     }
   }
 
-  c.movePiece = function(from, to){
+  c.movePiece = function(move){
     var pieceToMove;
     for(var i = 0; i < c.pieceList.length; i++){
-      if(c.pieceList[i].boardPos() === from){
+      if(c.pieceList[i].boardPos() === move.from){
         pieceToMove = c.pieceList[i];
         break;
       }
     }
 
     for(var i = 0; i < c.pieceList.length; i++){
-      if(c.pieceList[i].boardPos() === to){
+      if(c.pieceList[i].boardPos() === move.to){
           c.pieceList[i].remove();
           c.pieceList.splice(i,1);
           break;
@@ -32,15 +32,16 @@ function Chess(id) {
     }
 
     var padding = c.cell_size*0.1;
-    var from_column = from.charCodeAt(0)-97;
-    var from_row = parseInt(8-from.charAt(1));
-    var column = to.charCodeAt(0)-97;
-    var row = parseInt(8-to.charAt(1));
+    var from_column = move.from.charCodeAt(0)-97;
+    var from_row = parseInt(8-move.from.charAt(1));
+    var column = move.to.charCodeAt(0)-97;
+    var row = parseInt(8-move.to.charAt(1));
     var xloc = column*c.cell_size + padding;
     var yloc = row*c.cell_size + padding;
-    pieceToMove.attr({x: xloc, y: yloc});
+    //TODO Make the knight move up and then over
+    pieceToMove.animate({x: xloc, y: yloc},250);
     pieceToMove.boardPos = function(){
-      return to;
+      return move.to;
     }
     pieceToMove.unclick(c.cells[from_column][from_row].c_click);
     pieceToMove.click(c.cells[column][row].c_click);
@@ -96,7 +97,7 @@ function Chess(id) {
     for(var i = 0; i < moves.length; i++){
       var column = moves[i].to.charCodeAt(0)-97;
       var row = parseInt(8-moves[i].to.charAt(1));
-      c.cells[column][row].highlight('promotion' in moves[i],'captured' in moves[i]);
+      c.cells[column][row].highlight(moves[i]);
     }
   }
 
@@ -114,6 +115,7 @@ function Chess(id) {
     cell.data('row',8-y);
     cell.data('highlighted', false);
     cell.data('promotion', false);
+    cell.data('move', null);
     cell.c_mouseover = function(){
       if(!cell.data('highlighted')){
         cell.animate({fill: '#AAA'},250);
@@ -131,11 +133,11 @@ function Chess(id) {
       if(cell.data('highlighted')){
         if(cell.data('promotion')){
           promotion = prompt('What would you like to promote to? (q,r,b,n)');
-          c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos(), promotion: promotion});
+          c.logic.move({from: cell.data('move').from, to: cell.data('move').to, promotion: promotion});
         }else{
-          c.logic.move({from: c.currentPiece.boardPos(), to: cell.boardPos()});
+          c.logic.move(cell.data('move').san);
         }
-        $.post('/games/'+id+'/move',{fen: c.logic.fen(), from: c.currentPiece.boardPos(), to: cell.boardPos(), promotion: promotion});
+        $.post('/games/'+id+'/move',{fen: c.logic.fen(), move: cell.data('move')});
         var column = cell.boardPos().charCodeAt(0)-97;
         var row = parseInt(8-cell.boardPos().charAt(1));
         c.currentPiece = null;
@@ -157,17 +159,18 @@ function Chess(id) {
       return cell.data('column')+cell.data('row');
     }
 
-    cell.highlight = function(isPromotion,isKill){
-      if(isPromotion){
+    cell.highlight = function(move){
+      if('promotion' in move){
         cell.attr({fill: '#0000FF'});
         cell.data('promotion',true);
       }
-      else if(isKill){
+      else if('captured' in move){
         cell.attr({fill: '#FF0000'});
       }else{
         cell.attr({fill: '#FFB800'});
       }
       cell.data('highlighted',true);
+      cell.data('move',move);
     }
 
     return cell
@@ -197,6 +200,7 @@ function Chess(id) {
           cell.animate({fill: cell.data('color')},250);
           cell.data('highlighted',false);
           cell.data('promotion',false);
+          cell.data('move',null);
         }
       }
     }
@@ -234,12 +238,12 @@ function Chess(id) {
         $('#game_turn').text("Current Turn: "+pc);
 
         c.logic.load(data.fen);
-        c.movePiece(data.from, data.to);
-        if(data.promotion !== ''){
+        c.movePiece(data.move);
+        if(typeof data.move.promotion !== 'undefined'){
           if(pc === 'Black'){
-            data.promotion = data.promotion.toUpperCase();
+            data.move.promotion = data.move.promotion.toUpperCase();
           }
-          c.changePiece(data.to, data.promotion);
+          c.changePiece(data.to, data.move.promotion);
         }
 
       });
