@@ -3,41 +3,34 @@ function Chess(id) {
   c.board = $('#'+id);
   c.valid = c.board.length == 1;
   c.currentPiece = null;
-  c.pieceList = []; //Array to hold all the pieces on the board
+  c.pieceList = {} //Hash to hold all the pieces on the board
 
   c.changePiece = function(board_loc, piece){
-    for(var i = 0; i < c.pieceList.length; i++){
-      if(c.pieceList[i].boardPos() === board_loc){
-        c.pieceList[i].attr({src: '/images/pieces/'+piece+'.png'});
-        return;
+    for(var loc in c.pieceList){
+      if(loc === board_loc){
+        c.pieceList[loc].attr({src: '/images/pieces/'+piece+'.png'});
+        break;
       }
     }
   }
 
   c.movePiece = function(move){
-    var pieceToMove;
-    for(var i = 0; i < c.pieceList.length; i++){
-      if(c.pieceList[i].boardPos() === move.from){
-        pieceToMove = c.pieceList[i];
-        break;
-      }
-    }
+    var pieceToMove = c.pieceList[move.from];
 
-    for(var i = 0; i < c.pieceList.length; i++){
-      if(c.pieceList[i].boardPos() === move.to){
-          c.pieceList[i].remove();
-          c.pieceList.splice(i,1);
-          break;
-        }
+    //Killing a piece
+    if(typeof c.pieceList[move.to] !== 'undefined'){
+      c.pieceList[move.to].remove();
+      delete c.pieceList[move.to];
     }
 
     var padding = c.cell_size*0.1;
     var from_column = move.from.charCodeAt(0)-97;
-    var from_row = parseInt(8-move.from.charAt(1));
+    var from_row = 8-parseInt(move.from.charAt(1));
     var column = move.to.charCodeAt(0)-97;
     var row = parseInt(8-move.to.charAt(1));
     var xloc = column*c.cell_size + padding;
     var yloc = row*c.cell_size + padding;
+    
     //TODO Make the knight move up and then over
     pieceToMove.animate({x: xloc, y: yloc},250);
     pieceToMove.boardPos = function(){
@@ -51,15 +44,65 @@ function Chess(id) {
 
     pieceToMove.unmouseout(c.cells[from_column][from_row].c_mouseout);
     pieceToMove.mouseout(c.cells[column][row].c_mouseout);
+    c.pieceList[move.to] = pieceToMove;
+    delete c.pieceList[move.from];
+
+    //En passant
+    if(move.flags === 'e'){
+      for(var loc in c.pieceList){
+        if(c.logic.get(loc) === null){
+          c.pieceList[loc].remove();
+          delete c.pieceList[loc];
+          break;
+        }
+      }
+    }
+
+    //Castling
+    if(move.flags === 'k' || move.flags === 'q'){
+      for(var loc in c.pieceList){
+        if(c.logic.get(loc) === null){
+          var from_column = loc.charCodeAt(0)-97;
+          var from_row = 8-parseInt(loc.charAt(1));
+          var fromLoc = loc;
+          pieceToMove = c.pieceList[loc];
+          break;
+        }
+      }
+      for(var i = 0; i < 64; i++){
+        var row = i % 8;
+        var column = Math.floor(i/8);
+        var pos = String.fromCharCode(column + 97)+(row + 1).toString();
+        if(c.logic.get(pos) !== null && typeof c.pieceList[pos] === 'undefined'){
+          var toLoc = pos;
+        }
+      }
+
+      var column = toLoc.charCodeAt(0)-97;
+      var row = 8-parseInt(toLoc.charAt(1));
+      var xloc = column*c.cell_size + padding;
+      var yloc = row*c.cell_size + padding;
+      
+      //TODO Make the knight move up and then over
+      pieceToMove.animate({x: xloc, y: yloc},250);
+      pieceToMove.boardPos = function(){
+        return toLoc;
+      }
+      pieceToMove.unclick(c.cells[from_column][from_row].c_click);
+      pieceToMove.click(c.cells[column][row].c_click);
+
+      pieceToMove.unmouseover(c.cells[from_column][from_row].c_mouseover);
+      pieceToMove.mouseover(c.cells[column][row].c_mouseover);
+
+      pieceToMove.unmouseout(c.cells[from_column][from_row].c_mouseout);
+      pieceToMove.mouseout(c.cells[column][row].c_mouseout);
+      c.pieceList[toLoc] = pieceToMove;
+      delete c.pieceList[fromLoc];
+    }
   }
 
   c.drawInitial = function(){
     if(c.valid){
-      //Clear all the pieces from our array
-      for(var i = 0; i < c.pieceList.length; i++){
-        c.pieceList[i].remove();
-      }
-      c.pieceList.length = 0;
       var fen = c.logic.fen().split('');
       var column = 0;
       var row = 0;
@@ -189,7 +232,7 @@ function Chess(id) {
     piece.boardPos = function(){
       return pos;
     }
-    c.pieceList.push(piece);
+    c.pieceList[pos] = piece;
   }
 
   c.unhighlightAll = function(){
@@ -243,7 +286,6 @@ function Chess(id) {
           if(pc === 'Black'){
             data.move.promotion = data.move.promotion.toUpperCase();
           }
-          debugger;
           c.changePiece(data.move.to, data.move.promotion);
         }
 

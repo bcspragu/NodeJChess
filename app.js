@@ -15,7 +15,7 @@ var mongoose = require('mongoose'),
     Game = require('./models/Game');
 
 app = express();
-var server = http.createServer(app)
+var server = http.createServer(app);
 io = require('socket.io').listen(server);
 
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
