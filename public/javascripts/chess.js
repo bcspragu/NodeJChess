@@ -31,8 +31,23 @@ function Chess(id) {
     var xloc = column*c.cell_size + padding;
     var yloc = row*c.cell_size + padding;
     
-    //TODO Make the knight move up and then over
-    pieceToMove.animate({x: xloc, y: yloc},250);
+    if(move.piece == 'n'){
+      var from_x = from_column*c.cell_size + padding;
+      var from_y = from_row*c.cell_size + padding;
+      var x_diff = Math.abs(xloc - from_x);
+      var y_diff = Math.abs(yloc - from_y);
+      if(x_diff > y_diff){
+        pieceToMove.animate({x: xloc},125,function(){
+          pieceToMove.animate({y: yloc},125);
+        });
+      }else{
+        pieceToMove.animate({y: yloc},125,function(){
+          pieceToMove.animate({x: xloc},125);
+        });
+      }
+    }else{
+      pieceToMove.animate({x: xloc, y: yloc},250);
+    }
     pieceToMove.boardPos = function(){
       return move.to;
     }
@@ -83,7 +98,6 @@ function Chess(id) {
       var xloc = column*c.cell_size + padding;
       var yloc = row*c.cell_size + padding;
       
-      //TODO Make the knight move up and then over
       pieceToMove.animate({x: xloc, y: yloc},250);
       pieceToMove.boardPos = function(){
         return toLoc;
