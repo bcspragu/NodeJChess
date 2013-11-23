@@ -1,0 +1,22 @@
+tr 
+  td
+    a(href="/games/"+game._id+"/")
+      =game.name
+  td
+    -if (game.white)
+      =game.white.name
+    -else
+      form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
+        input(type="hidden", name="color", value="w")
+        a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
+          ="None"
+  td
+    -if (game.black)
+      =game.black.name
+    -else
+      form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
+        input(type="hidden", name="color", value="b")
+        a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
+          ="None"
+  td=game.private
+

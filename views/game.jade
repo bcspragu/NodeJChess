@@ -19,7 +19,7 @@ block content
         -else
           form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
             ="Black: None "
-            input(type="hidden", name="color", value="black")
+            input(type="hidden", name="color", value="b")
             a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
               ="(join)"
       #white_player
@@ -34,6 +34,6 @@ block content
         -else
           form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
             ="White: None "
-            input(type="hidden", name="color", value="white")
+            input(type="hidden", name="color", value="w")
             a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
               ="(join)"

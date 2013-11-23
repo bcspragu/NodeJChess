@@ -1,8 +1,9 @@
-function Chess(id) {
+function Chess(id,socket) {
   var c = this;
   c.board = $('#'+id);
   c.valid = c.board.length == 1;
   c.currentPiece = null;
+  c.socket;
   c.pieceList = {} //Hash to hold all the pieces on the board
 
   c.changePiece = function(board_loc, piece){
@@ -249,6 +250,10 @@ function Chess(id) {
     c.pieceList[pos] = piece;
   }
 
+  c.reloadPlayer = function(data){
+    c.player_color = data.color;
+  }
+
   c.unhighlightAll = function(){
     for(var i = 0; i < 8; i++){
       for(var j = 0; j < 8; j++){
@@ -266,11 +271,7 @@ function Chess(id) {
   if(c.valid){
     //Load the game
     $.post('/games/'+id+'/info',function(data){
-      if(data.env === 'development'){
-        c.socket = io.connect('http://localhost');
-      }else{
-        c.socket = io.connect('http://infinite-wave-1213.herokuapp.com');
-      }
+      c.socket = socket;
       c.player_color = data.player_color;
       c.start_fen = data.fen;
       c.logic = new ChessLogic(c.start_fen);
@@ -304,7 +305,6 @@ function Chess(id) {
         }
 
       });
-
     },'json');
   }
 

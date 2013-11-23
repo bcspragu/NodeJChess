@@ -5,11 +5,11 @@ var mongoose    = require('mongoose'),
 exports.create_game = function(req, res) {
   var post = req.body;
   var game = new Game({name: post.name});
-  if (post.player == "white"){
-    game.white = res.locals.current_user._id
+  if (post.player == "w"){
+    game.white = res.locals.current_user._id;
   }
-  if (post.player == "black"){
-    game.black = res.locals.current_user._id
+  if (post.player == "b"){
+    game.black = res.locals.current_user._id;
   }
   //Default to a regular game
   game.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -17,8 +17,12 @@ exports.create_game = function(req, res) {
     if (err)
       res.send('An error has occurred');
     else {
+      id = g.id;
       res.redirect('/games/'+g._id);
     }
+  });
+  app.render('game_row',{game: game},function(err,html){
+    io.sockets.emit('create', {row: html});
   });
 }
 
@@ -32,11 +36,11 @@ exports.show = function(req, res) {
 exports.join = function(req,res) {
   var post = req.body;
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
-    if (post.color == "white" && !game.white)
-      game.white = res.locals.current_user._id
-    if (post.color == "black" && !game.black)
-      game.black = res.locals.current_user._id
-    game.save(function(err, g) {
+    if (post.color == "w" && !game.white)
+      game.white = res.locals.current_user._id;
+    if (post.color == "b" && !game.black)
+      game.black = res.locals.current_user._id;
+      game.save(function(err, g) {
       if (err)
         res.send('An error has occurred');
       else {
@@ -46,6 +50,7 @@ exports.join = function(req,res) {
       }
     });
   });
+  io.sockets.emit(req.params.id+'/join', {color: post.color, name: res.locals.current_user.name});
 }
 
 exports.leave = function(req, res) {
@@ -69,16 +74,18 @@ exports.leave = function(req, res) {
 
 exports.move = function(req,res) {
   var post = req.body;
-  Game.findById(req.params.id).exec(function(err, game) {
-    //TODO Add checking to make sure it's the right person's move
-    game.past_fen.push(game.fen);
-    game.fen = post.fen;
-    game.save(function(err, g) {
-      if (err){
-        res.send(500);
-        return;
-      }
-    });
+  Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
+    //Make sure nobody is trying anything sneaky
+    if((post.move.color == 'b' && res.locals.current_user.id == game.black.id) || (post.move.color == 'w' && res.locals.current_user.id == game.white.id)){
+      game.past_fen.push(game.fen);
+      game.fen = post.fen;
+      game.save(function(err, g) {
+        if (err){
+          res.send(500);
+          return;
+        }
+      });
+    }
   });
   io.sockets.emit(req.params.id+'/move', {fen: post.fen, move: post.move});
   res.send(200);
