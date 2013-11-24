@@ -5,11 +5,14 @@ var mongoose    = require('mongoose'),
 exports.create_game = function(req, res) {
   var post = req.body;
   var game = new Game({name: post.name});
+  var white, black;
   if (post.player == "w"){
     game.white = res.locals.current_user._id;
+    white = res.locals.current_user;
   }
   if (post.player == "b"){
     game.black = res.locals.current_user._id;
+    black = res.locals.current_user;
   }
   //Default to a regular game
   game.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -17,11 +20,11 @@ exports.create_game = function(req, res) {
     if (err)
       res.send('An error has occurred');
     else {
-      id = g.id;
       res.redirect('/games/'+g._id);
     }
   });
-  app.render('game_row',{game: game},function(err,html){
+
+  app.render('game_row',{game: game, white: white, black: black},function(err,html){
     io.sockets.emit('create', {row: html});
   });
 }

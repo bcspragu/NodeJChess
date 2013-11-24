@@ -14,7 +14,6 @@ $(function(){
     });
   }
   socket.on('create',function(data){
-    //Figure out how to render new rows
     $('#game_list').find('table').append(data.row);
   });
 });

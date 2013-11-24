@@ -10,6 +10,8 @@ block content
         th="Private?"
       -for (var i = 0; i < games.length; i++)
         -var game = games[i]
+        -var white = games[i].white
+        -var black = games[i].black
         include game_row
   #new_game.grid_4
     form(name="create_game", action="/games/create", method="post")
