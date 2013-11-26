@@ -23,6 +23,10 @@ var UserSchema = new mongoose.Schema({
   losses:{
     type: Number,
     default:0,
+  },
+  games_played:{
+    type: Number,
+    default:0,
   }
 });
 
