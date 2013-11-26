@@ -2,38 +2,5 @@ extends layout
 
 block content
   .grid_10.prefix_2
-    h2
-      #game_title="Game: " + game.name
-      #game_turn="Current Turn: " + (game.fen.split(' ')[1] === 'b' ? "Black" : "White")
-    div(id=game._id).game_board
-    h3
-      #black_player
-        -if(game.black)
-          ="Black: "
-          -if (game.black._id == current_user.id) 
-            =game.black.name+" "
-            a(href="/games/"+game._id+"/leave")
-              ="(quit)"
-          -else
-            =game.black.name
-        -else
-          form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
-            ="Black: None "
-            input(type="hidden", name="color", value="b")
-            a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
-              ="(join)"
-      #white_player
-        -if(game.white)
-          ="White: "
-          -if (game.white._id == current_user.id)
-            =game.white.name+" "
-            a(href="/games/"+game._id+"/leave")
-              ="(quit)"
-          -else
-            =game.white.name
-        -else
-          form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
-            ="White: None "
-            input(type="hidden", name="color", value="w")
-            a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
-              ="(join)"
+    -var verbose = true;
+    include game_board

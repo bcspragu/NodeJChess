@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  -for (var i = 0; i < 2; i++)
+    -for (var j = 0; j < 3; j++)
+      -if((j+i*3) < games.length)
+        -var first = (j === 0 ? 'grid_4 prefix_2' : 'grid_4');
+        div(class=first)
+          -var verbose = false;
+          -var game = games[j+i*3];
+          include game_board
+      -else
+        -break;
+    .clear

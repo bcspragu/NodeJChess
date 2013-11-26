@@ -120,11 +120,11 @@ a {
   float: right;
 }
 
-#black_player{
+.black_player{
   float: left;
 }
 
-#white_player{
+.white_player{
   float: right;
 }
 

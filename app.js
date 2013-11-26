@@ -105,7 +105,8 @@ app.get('/logout', application.logout);
 
 //These actions are protected by login system, checkAuth
 app.get('/', checkAuth, routes.index);
-app.get('/games', checkAuth, routes.index)
+app.get('/games', checkAuth, routes.index);
+app.get('/super_spectator', checkAuth, game.super_spectator);
 app.get('/users', checkAuth, user.list);
 app.post('/games/create', checkAuth, game.create_game);
 app.get('/games/:id', checkAuth, game.show);

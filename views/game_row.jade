@@ -4,7 +4,7 @@ tr
       =game.name
   td
     -if (white)
-      =white.name
+      = white.name
     -else
       form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
         input(type="hidden", name="color", value="w")
@@ -19,4 +19,3 @@ tr
         a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
           ="None"
   td=game.private
-

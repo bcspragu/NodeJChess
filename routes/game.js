@@ -53,7 +53,7 @@ exports.join = function(req,res) {
       }
     });
   });
-  io.sockets.emit(req.params.id+'/join', {color: post.color, name: res.locals.current_user.name});
+  io.sockets.emit(req.params.id+'/join', {color: post.color, name: res.locals.current_user.name, id: req.params.id});
 }
 
 exports.leave = function(req, res) {
@@ -96,14 +96,22 @@ exports.move = function(req,res) {
 
 exports.info = function(req, res) {
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, g) {
-    var player_color;
+    var player_color = [];
     if(g.white && g.white._id.toHexString() === res.locals.current_user._id.toHexString()){
-      player_color = 'w';
-    }else if(g.black && g.black._id.toHexString() === res.locals.current_user._id.toHexString()){
-      player_color = 'b';
-    }else{
-      player_color = 's';
+      player_color.push('w');
+    }
+    if(g.black && g.black._id.toHexString() === res.locals.current_user._id.toHexString()){
+      player_color.push('b');
+    }
+    else{
+      player_color.push('s');
     }
     res.json({player_color: player_color, fen: g.fen, env: app.get('env')});
+  });
+}
+
+exports.super_spectator = function(req,res) {
+  Game.find({}).populate('white').populate('black').limit(6).exec(function(err,games){
+    res.render('super_spectator', {title: 'NodeChess', games: games})
   });
 }

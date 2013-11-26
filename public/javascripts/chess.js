@@ -202,7 +202,7 @@ function Chess(id,socket) {
         c.unhighlightAll();
       }
       //If there is a piece on that cell and it's their turn
-      if(c.logic.get(board_loc) && c.logic.turn() === c.logic.get(board_loc).color && c.logic.turn() === c.player_color){
+      if(c.logic.get(board_loc) && c.logic.turn() === c.logic.get(board_loc).color && $.inArray(c.logic.turn(),c.player_color) != -1){
         c.unhighlightAll();
         c.highlightMoves(c.logic.moves({square: board_loc, verbose: true}));
         c.currentPiece = cell;
@@ -293,7 +293,7 @@ function Chess(id,socket) {
 
       c.socket.on(id+'/move', function (data) {
         var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
-        $('#game_turn').text("Current Turn: "+pc);
+        $('c_turn').text(pc);
 
         c.logic.load(data.fen);
         c.movePiece(data.move);
