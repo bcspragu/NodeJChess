@@ -16,10 +16,13 @@ var UserSchema = new mongoose.Schema({
     default:1000,
     index:true
   },
-  games_played:{
+  wins:{
     type: Number,
     default:0,
-    index:true
+  },
+  losses:{
+    type: Number,
+    default:0,
   }
 });
 

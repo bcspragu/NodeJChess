@@ -20,7 +20,11 @@ var GameSchema = new mongoose.Schema({
     index: true
   },
   fen: String,
-  past_fen: [String]
+  past_fen: [String],
+  completed: {
+    type: Boolean,
+    default: false
+  }
 });
 
 module.exports = mongoose.model('Game', GameSchema);

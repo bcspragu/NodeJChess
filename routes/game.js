@@ -39,9 +39,9 @@ exports.show = function(req, res) {
 exports.join = function(req,res) {
   var post = req.body;
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
-    if (post.color == "w" && !game.white)
+    if (post.color == "w" && !game.white && !game.completed)
       game.white = res.locals.current_user._id;
-    if (post.color == "b" && !game.black)
+    if (post.color == "b" && !game.black && !game.completed)
       game.black = res.locals.current_user._id;
       game.save(function(err, g) {
       if (err)
@@ -59,9 +59,9 @@ exports.join = function(req,res) {
 exports.leave = function(req, res) {
   var post = req.body;
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
-    if (game.white && res.locals.current_user.id == game.white._id)
+    if (game.white && res.locals.current_user.id == game.white._id && !game.completed)
       game.white = undefined;
-    if (game.black && res.locals.current_user.id == game.black._id)
+    if (game.black && res.locals.current_user.id == game.black._id && !game.completed)
       game.black = undefined;
     game.save(function(err, g) {
       if (err)
@@ -111,7 +111,42 @@ exports.info = function(req, res) {
 }
 
 exports.super_spectator = function(req,res) {
-  Game.find({}).populate('white').populate('black').exec(function(err,games){
+  Game.find({}).populate('white').populate('black').sort('name').exec(function(err,games){
     res.render('super_spectator', {title: 'NodeChess', games: games})
   });
+}
+
+exports.game_over = function(req, res) {
+  Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
+    //Make sure nobody is trying anything sneaky
+    if(!game.completed){
+      game.completed = true;
+      if(game.fen.split(' ')[1] == 'w'){ //White won
+        var white = game.white;
+        var black = game.black;
+        white.games_played += 1;
+        black.games_played += 1;
+        white.wins += 1;
+        black.losses += 1;
+        white.save();
+        black.save();
+      }else{ //Black won
+        var white = game.white;
+        var black = game.black;
+        white.games_played += 1;
+        black.games_played += 1;
+        black.wins += 1;
+        white.losses += 1;
+        white.save();
+        black.save();
+      }
+      game.save(function(err, g) {
+        if (err){
+          res.send(500);
+          return;
+        }
+      });
+    }
+  });
+  res.send(200);
 }

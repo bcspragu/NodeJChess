@@ -268,6 +268,22 @@ function Chess(id,socket) {
     }
   }
 
+  c.checkify = function(){
+    //Check if check/checkmate
+    if(c.logic.in_checkmate()){
+      c.message.attr({text: 'Checkmate'}).animate({opacity: 0.75},250);
+      $.post('/games/'+id+'/game_over');
+    }
+    else if(c.logic.in_check()){
+      c.message.attr({text: 'Check'}).animate({opacity: 0.75},250);
+    }
+    else{
+      c.message.animate({opacity: 0},250,function(){
+        c.message.attr({text: ''});
+      });
+    }
+  }
+
   if(c.valid){
     //Load the game
     $.post('/games/'+id+'/info',function(data){
@@ -275,10 +291,10 @@ function Chess(id,socket) {
       c.player_color = data.player_color;
       c.start_fen = data.fen;
       c.logic = new ChessLogic(c.start_fen);
-      var width = c.board.width();
-      c.cell_size = width/8;
-      c.board.height(width);         //Make the board square
-      c.paper = Raphael(c.board.get(0),width,width);
+      c.width = c.board.width();
+      c.cell_size = c.width/8;
+      c.board.height(c.width);         //Make the board square
+      c.paper = Raphael(c.board.get(0),c.width,c.width);
       c.cells = new Array(8);
       for(var i = 0; i < 8; i++){
         c.cells[i] = new Array(8);
@@ -288,9 +304,14 @@ function Chess(id,socket) {
           c.cells[x][y] = c.chessCell(x,y);
         }
       }
-      c.paper.rect(0,0,width,width,3).attr({'stroke-width': 2, stroke: '#000'});
+      c.paper.rect(0,0,c.width,c.width,3).attr({'stroke-width': 2, stroke: '#000'});
       c.drawInitial();
-
+      c.message = c.paper.text(c.width/2,c.width/2,'').attr(
+        {
+          'font-size': 100*(c.width/1000),
+          opacity: 0
+        }).transform('r-30,'+c.width/2+','+c.width/2);
+      c.checkify();
       c.socket.on(id+'/move', function (data) {
         var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
         $('#'+id).parent().find('.c_turn').text(pc);
@@ -303,7 +324,7 @@ function Chess(id,socket) {
           }
           c.changePiece(data.move.to, data.move.promotion);
         }
-
+        c.checkify();
       });
     },'json');
   }

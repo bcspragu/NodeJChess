@@ -113,6 +113,7 @@ app.get('/games/:id', checkAuth, game.show);
 app.post('/games/:id/join', checkAuth, game.join);
 app.post('/games/:id/move', checkAuth, game.move);
 app.post('/games/:id/info', checkAuth, game.info);
+app.post('/games/:id/game_over', checkAuth, game.game_over);
 app.get('/games/:id/leave', checkAuth, game.leave);
 
 server.listen(app.get('port'), function(){
