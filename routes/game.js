@@ -111,7 +111,7 @@ exports.info = function(req, res) {
 }
 
 exports.super_spectator = function(req,res) {
-  Game.find({}).populate('white').populate('black').limit(6).exec(function(err,games){
+  Game.find({}).populate('white').populate('black').exec(function(err,games){
     res.render('super_spectator', {title: 'NodeChess', games: games})
   });
 }

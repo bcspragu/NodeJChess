@@ -293,7 +293,7 @@ function Chess(id,socket) {
 
       c.socket.on(id+'/move', function (data) {
         var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
-        $('c_turn').text(pc);
+        $('#'+id).parent().find('.c_turn').text(pc);
 
         c.logic.load(data.fen);
         c.movePiece(data.move);

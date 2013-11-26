@@ -7,9 +7,9 @@ $(function(){
       socket.on(game_id+'/join', function(data){
         var board = $('#'+data.id);
         if(data.color == 'b'){
-          board.find('.black_name').text(data.name);
+          board.parent().find('.black_name').text(data.name);
         }else if(data.color == 'w'){
-          board.find('.white_name').text(data.name);
+          board.parent().find('.white_name').text(data.name);
         }
       });
     });
@@ -18,4 +18,5 @@ $(function(){
   socket.on('create',function(data){
     $('#game_list').find('table').append(data.row);
   });
+
 });

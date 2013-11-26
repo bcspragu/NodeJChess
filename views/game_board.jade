@@ -1,40 +1,82 @@
-h2
-  #game_title=(verbose ? 'Game: ' : '') + game.name
-  #game_turn
-    =(verbose ? 'Current Turn: ' : '')
-    span.c_turn
-      =(game.fen.split(' ')[1] === 'b' ? "Black" : "White")
+-if(verbose)
+  h1
+    #game_title='Game: ' + game.name
+    #game_turn
+      ='Current Turn: '
+      span.c_turn
+        =(game.fen.split(' ')[1] === 'b' ? "Black" : "White")
+-else
+  h3
+    #game_title
+      a(href="/games/"+game._id)
+        =game.name
+    #game_turn
+      span.c_turn
+        =(game.fen.split(' ')[1] === 'b' ? "Black" : "White")
 .game_board(id=game._id)
-h3
-  .black_player
-    -if(game.black)
-      =(verbose ? 'Black: ' : '')
-      span.black_name
-        -if (game.black._id == current_user.id) 
-          =game.black.name+' '
-          a(href="/games/"+game._id+"/leave")
-            ="(quit)"
-        -else
-          =game.black.name
-    -else
-      form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
-        =(verbose ? 'Black: ' : '') + 'None'
-        input(type="hidden", name="color", value="b")
-        a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
-          ="(join)"
-  .white_player
-    -if(game.white)
-      =verbose ? 'White: ' : ''
-      span.white_name
-        -if (game.white._id == current_user.id)
-          =game.white.name + ' '
-          a(href="/games/"+game._id+"/leave")
-            ="(quit)"
-        -else
-          =game.white.name
-    -else
-      form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
-        =(verbose ? 'White: ' : '') + 'None'
-        input(type="hidden", name="color", value="w")
-        a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
-          ="(join)"
+-if(verbose)
+  h2.players_large
+    .black_player
+      -if(game.black)
+        ='Black: '
+        span.black_name
+          -if (game.black._id == current_user.id) 
+            =game.black.name+' '
+            a(href="/games/"+game._id+"/leave")
+              ="(quit)"
+          -else
+            =game.black.name
+      -else
+        form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
+          ='Black: None '
+          input(type="hidden", name="color", value="b")
+          a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
+            ="(join)"
+    .white_player
+      -if(game.white)
+        ='White: '
+        span.white_name
+          -if (game.white._id == current_user.id)
+            =game.white.name + ' '
+            a(href="/games/"+game._id+"/leave")
+              ="(quit)"
+          -else
+            =game.white.name
+      -else
+        form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
+          ='White: None '
+          input(type="hidden", name="color", value="w")
+          a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
+            ="(join)"
+-else
+  h4.players_small
+    .black_player
+      -if(game.black)
+        span.black_name
+          -if (game.black._id == current_user.id) 
+            =game.black.name+' '
+            a(href="/games/"+game._id+"/leave")
+              ="(quit)"
+          -else
+            =game.black.name
+      -else
+        form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
+          ='None '
+          input(type="hidden", name="color", value="b")
+          a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
+            ="(join)"
+    .white_player
+      -if(game.white)
+        span.white_name
+          -if (game.white._id == current_user.id)
+            =game.white.name + ' '
+            a(href="/games/"+game._id+"/leave")
+              ="(quit)"
+          -else
+            =game.white.name
+      -else
+        form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
+          ='None '
+          input(type="hidden", name="color", value="w")
+          a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
+            ="(join)"
