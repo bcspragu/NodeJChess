@@ -1,6 +1,8 @@
 var mongoose    = require('mongoose'),
     User = require('../models/User');
 
+var form_helpers = require('../helpers/form_helpers.js');
+
 /*
  * application
  */
@@ -8,22 +10,16 @@ var mongoose    = require('mongoose'),
  function create_account_checks(username,password) //Checks for bad words + username length + password length
  {
    var return_string = "good";
-   var bad_words = ["penis","vagina","fuck","nigger","douche","faggot","shit","dick","pussy","asshole","crap"];
 
-   if(!(username.length >= 5 && username.length<=20))
+   if(!form_helpers.length_between(username,5,20))
     return_string = "bad_username_length";
 
-   if(!(password.length >= 5 && password.length<=20))
+   if(!form_helpers.length_between(password,5,20))
     return_string = "bad_password_length";
 
-   for(var x=0;x<bad_words.length;x++)
-   {
-    if(username.toLowerCase().indexOf(bad_words[x])>=0)
-    {
-      return_string = "bad_username";
-      break;
-    }
-   }
+   if(form_helpers.contains_bad_word(username))
+    return_string = "bad_username";
+    
 
   return return_string;
  }
