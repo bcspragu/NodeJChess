@@ -10,6 +10,11 @@ var form_helpers = require('../helpers/form_helpers.js');
  function create_account_checks(username,password) //Checks for bad words + username length + password length
  {
    var return_string = "good";
+<<<<<<< HEAD
+=======
+   //My friend is fond of poop, had to add that one there
+   var bad_words = ["penis","vagina","fuck","nigger","douche","faggot","shit","dick","pussy","asshole","crap","cunt","poop"];
+>>>>>>> 2d648a38f133be9668ad59c1818b397a1155a594
 
    if(!form_helpers.length_between(username,5,20))
     return_string = "bad_username_length";

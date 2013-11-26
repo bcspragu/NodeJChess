@@ -2,9 +2,16 @@ var mongoose    = require('mongoose'),
     User = require('../models/User'),
     Game = require('../models/Game');
 
+var form_helpers = require('../helpers/form_helpers.js');
+
 exports.create_game = function(req, res) {
   var post = req.body;
   var game = new Game({name: post.name});
+
+/* Couldn't get this working, will look at it tomorrow"
+  if((!form_helpers.length_between(Game.name,5,20)) || form_helpers.contains_bad_word(Game.name))
+    res.send('Either the game name is too short or too long, or contains bad words. Please change and try again. Game names should be inbetween 5 and 20 characters.');
+*/
   var white, black;
   if (post.player == "w"){
     game.white = res.locals.current_user._id;
