@@ -1,6 +1,6 @@
 var contains_bad_word = function(given_string) //Returns true if contains bad words , false otherwise
 {
-	var bad_words = ["penis","vagina","fuck","nigger","douche","faggot","shit","dick","pussy","asshole","crap","poop"];
+	var bad_words = ["penis","vagina","fuck","nigger","douche","faggot","shit","dick","pussy","asshole","crap","poop","cunt"];
 
 	for(var x=0;x<bad_words.length;x++)
     {
