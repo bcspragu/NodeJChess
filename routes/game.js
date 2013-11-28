@@ -4,44 +4,69 @@ var mongoose    = require('mongoose'),
 
 var form_helpers = require('../helpers/form_helpers.js');
 
+function check_game_name(game_name)
+{
+  var return_string = "good";
+
+  if(!form_helpers.length_between(game_name,5,20))
+  {
+    return_string = "bad_length";
+  }
+
+  if(form_helpers.contains_bad_word(game_name))
+  {
+    return_string = "bad_word";
+  }
+
+  return return_string;
+}
+
 exports.create_game = function(req, res) {
   var post = req.body;
   var game = new Game({name: post.name});
+  var check_string = check_game_name(game.name);
 
-/* Couldn't get this working, will look at it tomorrow"
-  if((!form_helpers.length_between(Game.name,5,20)) || form_helpers.contains_bad_word(Game.name))
-    res.send('Either the game name is too short or too long, or contains bad words. Please change and try again. Game names should be inbetween 5 and 20 characters.');
-*/
-  var white, black;
-  if (post.player == "w"){
-    game.white = res.locals.current_user._id;
-    white = res.locals.current_user;
-  }
-  if (post.player == "b"){
-    game.black = res.locals.current_user._id;
-    black = res.locals.current_user;
-  }
-  //Default to a regular game
-  game.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-  game.save(function (err, g) {
-    if (err)
-      res.send('An error has occurred');
-    else {
-      res.redirect('/games/'+g._id);
-    }
-  });
 
-  app.render('game_row',{game: game, white: white, black: black},function(err,html){
-    io.sockets.emit('create', {row: html});
-  });
-}
+  switch(check_string) //Checks for length and no bad names in room names.
+  {
+    case "good":
+      var white, black;
+      if (post.player == "w"){
+        game.white = res.locals.current_user._id;
+        white = res.locals.current_user;
+      }
+      if (post.player == "b"){
+        game.black = res.locals.current_user._id;
+        black = res.locals.current_user;
+      }
+      //Default to a regular game
+      game.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+      game.save(function (err, g) {
+        if (err)
+          res.send('An error has occurred');
+        else {
+          res.redirect('/games/'+g._id);
+        }
+      });
+      app.render('game_row',{game: game, white: white, black: black},function(err,html){
+        io.sockets.emit('create', {row: html});
+      });
+      break;
+    case "bad_length":
+      res.send("Game name is too short, must be between 5 and 20 characters.");
+      break;
+    case "bad_word":
+      res.send("This site is family friendly, please change game name!");
+      break;
+  }
+};
 
 exports.show = function(req, res) {
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, g) {
     res.locals.game = g;
     res.render('game', { title: 'NodeChess - Game' });
   });
-}
+};
 
 exports.join = function(req,res) {
   var post = req.body;
