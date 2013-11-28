@@ -135,3 +135,7 @@ a {
 .players_large{
   padding-top: 20px;
 }
+
+.center{
+  text-align: center;
+}

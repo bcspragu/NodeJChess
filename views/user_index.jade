@@ -3,14 +3,18 @@ extends layout
 block content
   h1.
     User List
-  table
+  table.striped_table.center
         tr
           th="Player Name"
           th="Elo Rating"
           th="Games Played"
+          th="Wins"
+          th="Losses"
         -for (var i = 0; i < users.length; i++)
           -var user = users[i]
           tr   
             td=user.name
             td=user.elo_rating
             td=user.games_played
+            td=user.wins
+            td=user.losses

@@ -6,6 +6,6 @@ var mongoose    = require('mongoose'),
 
 exports.list = function(req, res){
   User.find({}, function(err, users) {
-    res.render('user_index', { title: 'UserList', users: users });
+    res.render('user_index', { title: 'UserList', users: users.sort( {elo: -1}) });
   });
 };
