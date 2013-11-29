@@ -144,9 +144,20 @@ exports.info = function(req, res) {
 
 exports.super_spectator = function(req,res) {
   Game.find({}).populate('white').populate('black').sort('name').exec(function(err,games){
-    res.render('super_spectator', {title: 'NodeChess', games: games})
+    res.render('super_spectator', {title: 'NodeChess', games: games});
   });
-}
+};
+
+/* ELO Calculations
+Rn = Ro + C * (S - Se)      (1)
+where:
+Rn = new rating 
+Ro = old rating 
+S  = score  
+Se = expected score 
+C  = constant 
+*/
+
 
 exports.game_over = function(req, res) {
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
@@ -156,19 +167,25 @@ exports.game_over = function(req, res) {
       if(game.fen.split(' ')[1] == 'w'){ //White won
         var white = game.white;
         var black = game.black;
+        var expected_score = Math.abs(white.elo_rating - black.elo_rating);
         white.games_played += 1;
         black.games_played += 1;
         white.wins += 1;
         black.losses += 1;
+        white.elo_rating = white.elo_rating + 30 * (1 - expected_score);
+        black.elo_rating = black.elo_rating + 30 * (0 - expected_score);
         white.save();
         black.save();
       }else{ //Black won
         var white = game.white;
         var black = game.black;
+        var expected_score = Math.abs(white.elo_rating - black.elo_rating);
         white.games_played += 1;
         black.games_played += 1;
         black.wins += 1;
         white.losses += 1;
+        white.elo_rating = white.elo_rating + 30 * (0 - expected_score);
+        black.elo_rating = black.elo_rating + 30 * (1 - expected_score);
         white.save();
         black.save();
       }
@@ -181,4 +198,4 @@ exports.game_over = function(req, res) {
     }
   });
   res.send(200);
-}
+};
