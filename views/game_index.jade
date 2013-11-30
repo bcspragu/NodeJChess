@@ -2,7 +2,7 @@ extends layout
 
 block content
   #game_list.grid_10
-    table.striped_table
+    table.striped_table.center
       tr
         th="Game Name"
         th="White Player"
@@ -31,3 +31,6 @@ block content
         input(type="radio", name="player", value="spectator")
         =" Spectator"
       input(type="submit", value="Create Game")
+  a(href="/users")="User List"
+
+
