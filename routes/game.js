@@ -49,7 +49,7 @@ exports.create_game = function(req, res) {
         }
       });
       app.render('game_row',{game: game, white: white, black: black},function(err,html){
-        io.sockets.emit('create', {row: html});
+        io.sockets.emit('create', {row: html, name: game.name});
       });
       break;
     case "bad_length":

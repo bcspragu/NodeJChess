@@ -15,7 +15,11 @@ $(function(){
     });
 
   }
+
   socket.on('create',function(data){
+    //Put the new row in the correct location
+    var name = data.name;
+    var rows = $('#game_list').find('table tr:not(:first)');
     $('#game_list').find('table').append(data.row);
   });
 

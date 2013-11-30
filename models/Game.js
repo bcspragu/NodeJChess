@@ -24,7 +24,8 @@ var GameSchema = new mongoose.Schema({
   completed: {
     type: Boolean,
     default: false
-  }
+  },
+  game_type: String
 });
 
 module.exports = mongoose.model('Game', GameSchema);
