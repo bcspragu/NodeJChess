@@ -8,7 +8,7 @@ tr
     -else
       form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
         input(type="hidden", name="color", value="w")
-        a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
+        a(href='#', class="join_game")
           ="None"
   td
     -if (black)
@@ -16,6 +16,6 @@ tr
     -else
       form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
         input(type="hidden", name="color", value="b")
-        a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
+        a(href='#', class="join_game")
           ="None"
   td=game.private

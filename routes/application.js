@@ -35,13 +35,13 @@ exports.attempt_login = function (req, res) {
       user.comparePassword(post.password, function(err, isMatch) {
         if (isMatch) {
           req.session.user_id = user._id;
-          res.redirect('/games/');
+          res.json({redirect: '/games/'});
         }
         else
-          res.send('Bad Password');
+          res.json({error: 'Bad Password'});
       });
     } else {
-      res.send('Bad username');
+      res.json({error: 'Bad Username'});
     }
   })
 };
@@ -55,21 +55,21 @@ exports.create_account = function(req, res) {
       var user = new User({name: post.user, password: post.password});
       user.save(function (err, user) {
         if (err)
-          res.send('Username already taken');
+          res.json({error: 'Username already taken'});
         else {
           req.session.user_id = user._id;
-          res.redirect('/');
+          res.json({redirect: '/'});
         }
       });
       break;
     case "bad_password_length":
-      res.send('Passwords must be between 5-20 chars');
+      res.json({error: 'Passwords must be between 5-20 chars'});
       break;
     case "bad_username":
-      res.send("Our site is family friendly! Please change your username.");
+      res.json({error: "Our site is family friendly! Please change your username."});
       break;
     case "bad_username_length":
-      res.send("Usernames must be between 5-20 chars");
+      res.json({error: "Usernames must be between 5-20 chars"});
   }
 };
 

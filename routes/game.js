@@ -43,9 +43,9 @@ exports.create_game = function(req, res) {
       game.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
       game.save(function (err, g) {
         if (err)
-          res.send('An error has occurred');
+          res.json({error: 'An error has occurred' });
         else {
-          res.redirect('/games/'+g._id);
+          res.json({redirect: '/games/'+g._id});
         }
       });
       app.render('game_row',{game: game, white: white, black: black},function(err,html){
@@ -53,10 +53,10 @@ exports.create_game = function(req, res) {
       });
       break;
     case "bad_length":
-      res.send("Game name is too short, must be between 5 and 20 characters.");
+      res.json({error: "Game name is too short, must be between 5 and 20 characters."});
       break;
     case "bad_word":
-      res.send("This site is family friendly, please change game name!");
+      res.json({error: "This site is family friendly, please change game name!"});
       break;
   }
 };
@@ -77,11 +77,9 @@ exports.join = function(req,res) {
       game.black = res.locals.current_user._id;
       game.save(function(err, g) {
       if (err)
-        res.send('An error has occurred');
+        res.json({error: 'An error has occurred'});
       else {
-        res.redirect('/games/'+g._id)
-        res.locals.game = g;
-        res.render('game', { title: 'NodeChess - Game' });
+        res.json({redirect: '/games/'+g._id})
       }
     });
   });
@@ -89,7 +87,6 @@ exports.join = function(req,res) {
 }
 
 exports.leave = function(req, res) {
-  var post = req.body;
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
     if (game.white && res.locals.current_user.id == game.white._id && !game.completed)
       game.white = undefined;
@@ -97,11 +94,9 @@ exports.leave = function(req, res) {
       game.black = undefined;
     game.save(function(err, g) {
       if (err)
-        res.send('An error has occurred');
+        res.json({error: 'An error has occurred'});
       else {
-        res.redirect('/games/'+g._id)
-        res.locals.game = g;
-        res.render('game', { title: 'NodeChess - Game' });
+        res.json({redirect: '/games/'+g._id})
       }
     });
   });

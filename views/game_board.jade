@@ -22,7 +22,7 @@
         span.black_name
           -if (game.black._id == current_user.id) 
             =game.black.name+' '
-            a(href="/games/"+game._id+"/leave")
+            a(href="/games/"+game._id+"/leave", class="quit_game")
               ="(quit)"
           -else
             =game.black.name
@@ -63,14 +63,14 @@
         form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
           ='None '
           input(type="hidden", name="color", value="b")
-          a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
+          a(href='#', class="join_game")
             ="(join)"
     .white_player
       -if(game.white)
         span.white_name
           -if (game.white._id == current_user.id)
             =game.white.name + ' '
-            a(href="/games/"+game._id+"/leave")
+            a(href="/games/"+game._id+"/leave", class="quit_game")
               ="(quit)"
           -else
             =game.white.name
@@ -78,5 +78,5 @@
         form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
           ='None '
           input(type="hidden", name="color", value="w")
-          a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
+          a(href='#', class="join_game")
             ="(join)"
