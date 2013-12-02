@@ -11,6 +11,7 @@ html
     script(src='/javascripts/chesslogic.js')
     script(src='/javascripts/chess.js')
     script(src='/javascripts/board.js')
+    script(src='/javascripts/game_index.js')
     script.
       var socket = io.connect('!{app.get('env') === 'development' ? 'http://localhost' : 'http://infinite-wave-1213.herokuapp.com'}');
   body

@@ -115,6 +115,7 @@ app.post('/games/:id/move', checkAuth, game.move);
 app.post('/games/:id/info', checkAuth, game.info);
 app.post('/games/:id/game_over', checkAuth, game.game_over);
 app.get('/games/:id/leave', checkAuth, game.leave);
+app.post('/lobby_message', checkAuth, application.lobby_message);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
