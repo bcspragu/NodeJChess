@@ -1,19 +1,6 @@
 extends layout
 
 block content
-  #game_list.grid_10
-    table.striped_table.center
-      tr
-        th="Game Name"
-        th="White Player"
-        th="Black Player"
-        th="Private?"
-      -for (var i = 0; i < games.length; i++)
-        -var verbose = true;
-        -var game = games[i]
-        -var white = games[i].white
-        -var black = games[i].black
-        include game_row
   .grid_4
     #new_game
       form(name="create_game", action="/games/create", method="post")
@@ -38,12 +25,26 @@ block content
             option(value="blitz") Blitz
             option(value="ai") AI
           input(type="submit", value="Create Game", id="create_game")
-    .chat
-      textarea#chat_messages.chat_messages
-      form(name="lobby_message", id="message", action="/lobby_message/", method="post")
-        input(type="hidden", id="room", name="room", value="lobby")
+    a(href="/users")="User List"
+  #game_list.grid_8
+    table.striped_table.center
+      tr
+        th="Game Name"
+        th="White Player"
+        th="Black Player"
+        th="Private?"
+      -for (var i = 0; i < games.length; i++)
+        -var verbose = true;
+        -var game = games[i]
+        -var white = games[i].white
+        -var black = games[i].black
+        include game_row
+  .chat.grid_4
+    textarea#chat_messages.chat_messages
+    form(name="lobby_message", id="message", action="/lobby_message/", method="post")
+      input(type="hidden", id="room", name="room", value="lobby")
+      input(type="submit", id="chat_submit", name="chat_submit",class="right")
+      .inputbox
         input(type="text", id="chat_input", name="chat_input")
-        input(type="submit", id="chat_submit", name="chat_submit")
-  a(href="/users")="User List"
 
 

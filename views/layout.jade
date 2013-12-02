@@ -28,7 +28,9 @@ html
                   =crumb[0]
         -if (typeof current_user !== 'undefined')
           #user_status.right
-            b="You are logged in as "+ current_user.name+" "
+            b="You are logged in as "
+              a(href="/users")=current_user.name
+              =" "
             a(href="/logout")="(Logout)"
     .container_16
       .grid_10.prefix_3

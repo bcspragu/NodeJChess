@@ -1,14 +1,4 @@
 $(function(){
-  socket.on('lobby_message', function(data) {
-    var name = data.name;
-    var message = data.message;
-    $("#lobby_chat_messages").append("<p>"+name+": "+message+"</p>");
-    var objDiv = $('#lobby_chat_messages');
-    if (objDiv.length > 0){
-      objDiv[0].scrollTop = objDiv[0].scrollHeight;
-    }
-  });
-
   socket.on('create',function(data){
     //Put the new row in the correct location
     var name = data.name.toLowerCase();
@@ -31,18 +21,5 @@ $(function(){
         table.append(new_row);
       }
     }
-  });
-
-  $('#lobby_message').on("submit", function(e){
-    e.preventDefault();
-    $.ajax({
-      type: "POST",
-      url: "/lobby_message",
-      data: {message: $("#chat_input").val()},
-      dataType: "json",
-      complete: function(data) {
-        $("#chat_input").val("");
-      }
-    });
   });
 });
