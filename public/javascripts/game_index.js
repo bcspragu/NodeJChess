@@ -3,6 +3,10 @@ $(function(){
     var name = data.name;
     var message = data.message;
     $("#chat_messages").append("<p>"+name+": "+message+"</p>");
+    var objDiv = $('#chat_messages');
+    if (objDiv.length > 0){
+        objDiv[0].scrollTop = objDiv[0].scrollHeight;
+    }
   });
 
   socket.on('create',function(data){
@@ -36,8 +40,8 @@ $(function(){
       url: "/lobby_message",
       data: {message: $("#chat_input").val()},
       dataType: "json",
-      success: function(data) {
-        $("chat_input").val("");
+      complete: function(data) {
+        $("#chat_input").val("");
       }
     });
   })
