@@ -7,7 +7,8 @@ block content
     include game_board
   .grid_4
     .chat
-      #game_chat_messages.chat_messages
-      form(name="/game_message", id="game_message", action="/games/"+game._id+"/message/", method="post")
+      textarea#chat_messages.chat_messages
+      form(name="/game_message", id="message", action="/games/"+game._id+"/message/", method="post")
+        input(type="hidden", id="room", name="room", value=game.id)
         input(type="text", id="chat_input", name="chat_input")
         input(type="submit", id="chat_submit", name="chat_submit")

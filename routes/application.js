@@ -77,8 +77,3 @@ exports.logout = function (req, res) {
   delete req.session.user_id;
   res.redirect('/login');
 };
-
-exports.lobby_message = function (req, res) {
-  io.sockets.emit('lobby_message', {name: res.locals.current_user.name, message: req.body.message});
-  res.send(200);
-}
