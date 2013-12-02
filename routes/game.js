@@ -194,3 +194,8 @@ exports.game_over = function(req, res) {
   });
   res.send(200);
 };
+
+exports.message = function (req, res) {
+  io.sockets.emit('games/'+req.params.id+"/message", {name: res.locals.current_user.name, message: req.body.message});
+  res.send(200);
+}

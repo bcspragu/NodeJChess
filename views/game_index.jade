@@ -33,7 +33,7 @@ block content
           =" Spectator"
         input(type="submit", value="Create Game", id="create_game")
     .chat
-      #chat_messages
+      #lobby_chat_messages.chat_messages
       form(name="lobby_message", id="lobby_message", action="/lobby_message/", method="post")
         input(type="text", id="chat_input", name="chat_input")
         input(type="submit", id="chat_submit", name="chat_submit")

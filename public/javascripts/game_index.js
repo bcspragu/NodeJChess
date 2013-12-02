@@ -2,10 +2,10 @@ $(function(){
   socket.on('lobby_message', function(data) {
     var name = data.name;
     var message = data.message;
-    $("#chat_messages").append("<p>"+name+": "+message+"</p>");
-    var objDiv = $('#chat_messages');
+    $("#lobby_chat_messages").append("<p>"+name+": "+message+"</p>");
+    var objDiv = $('#lobby_chat_messages');
     if (objDiv.length > 0){
-        objDiv[0].scrollTop = objDiv[0].scrollHeight;
+      objDiv[0].scrollTop = objDiv[0].scrollHeight;
     }
   });
 
@@ -44,5 +44,5 @@ $(function(){
         $("#chat_input").val("");
       }
     });
-  })
+  });
 });

@@ -54,4 +54,26 @@ $(function(){
     }); 
   });
 
+  socket.on('games/'+$("#game_id").val()+'/message', function(data) {
+    var name = data.name;
+    var message = data.message;
+    $("#game_chat_messages").append("<p>"+name+": "+message+"</p>");
+    var objDiv = $('#game_chat_messages');
+    if (objDiv.length > 0){
+      objDiv[0].scrollTop = objDiv[0].scrollHeight;
+    }
+  });
+
+  $('#game_message').on("submit", function(e){
+    e.preventDefault();
+    $.ajax({
+      type: "POST",
+      url: "/games/"+$("#game_id").val()+"/message",
+      data: {message: $("#chat_input").val()},
+      dataType: "json",
+      complete: function(data) {
+        $("#chat_input").val("");
+      }
+    });
+  })
 });
