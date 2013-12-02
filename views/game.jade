@@ -1,6 +1,13 @@
 extends layout
 
-block content
-  .grid_10.prefix_3
+block content 
+  input(type="hidden", id="game_id", value=""+game._id)
+  .grid_10.prefix_2
     -var verbose = true;
     include game_board
+  .grid_4
+    .chat
+      #game_chat_messages.chat_messages
+      form(name="/game_message", id="game_message", action="/games/"+game._id+"/message/", method="post")
+        input(type="text", id="chat_input", name="chat_input")
+        input(type="submit", id="chat_submit", name="chat_submit")
