@@ -215,6 +215,7 @@ exports.game_list = function(req, res) {
   Game.find({}).populate('white').populate('black').sort('name').exec(function(err, games) {
     res.render('game_list',{games: games});
   });
+}
 
 exports.message = function (req, res) {
   io.sockets.emit('games/'+req.params.id+"/message", {name: res.locals.current_user.name, message: req.body.message});
