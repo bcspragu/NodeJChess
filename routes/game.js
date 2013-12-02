@@ -3,6 +3,7 @@ var mongoose    = require('mongoose'),
     Game = require('../models/Game');
 
 var form_helpers = require('../helpers/form_helpers.js');
+var chess_helpers = require('../helpers/chess_helpers.js');
 
 function check_game_name(game_name)
 {
@@ -40,7 +41,16 @@ exports.create_game = function(req, res) {
         black = res.locals.current_user;
       }
       //Default to a regular game
-      game.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+      switch(post.mode){
+        case '960':
+          var c960 = chess_helpers.chess960row();
+          game.fen = c960+'/pppppppp/8/8/8/8/PPPPPPPP/'+c960.toUpperCase()+' w KQkq - 0 1';
+          break;
+        default:
+          game.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+          break;
+      }
+
       game.save(function (err, g) {
         if (err)
           res.json({error: 'An error has occurred' });
@@ -194,3 +204,15 @@ exports.game_over = function(req, res) {
   });
   res.send(200);
 };
+
+exports.board = function(req, res) {
+  Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
+    res.render('game_board',{game: game});
+  });
+}
+
+exports.game_list = function(req, res) {
+  Game.find({}).populate('white').populate('black').sort('name').exec(function(err, games) {
+    res.render('game_list',{games: games});
+  });
+}

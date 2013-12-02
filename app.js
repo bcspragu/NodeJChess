@@ -105,6 +105,7 @@ app.get('/logout', application.logout);
 
 //These actions are protected by login system, checkAuth
 app.get('/', checkAuth, routes.index);
+app.get('/games/game_list', checkAuth, game.game_list);
 app.get('/games', checkAuth, routes.index);
 app.get('/super_spectator', checkAuth, game.super_spectator);
 app.get('/users', checkAuth, user.list);
@@ -115,6 +116,7 @@ app.post('/games/:id/move', checkAuth, game.move);
 app.post('/games/:id/info', checkAuth, game.info);
 app.post('/games/:id/game_over', checkAuth, game.game_over);
 app.get('/games/:id/leave', checkAuth, game.leave);
+app.get('/games/:id/board', checkAuth, game.board);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

@@ -78,4 +78,11 @@ $(function(){
     }); 
   });
 
+  $('body').on('click','.new_game',function(){
+    var current = $(this);
+    var next = current.parent().next().find('.board_selector');
+    current.removeClass('new_game');
+    current.load('/games/game_list');
+    //next.removeClass('board_selector').addClass('new_game');
+  });
 });

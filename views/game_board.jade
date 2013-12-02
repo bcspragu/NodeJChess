@@ -30,7 +30,7 @@
         form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
           ='Black: None '
           input(type="hidden", name="color", value="b")
-          a(onclick="document.getElementById('myform1"+game._id+"').submit();", href='#')
+          a(href='#', class="join_game")
             ="(join)"
     .white_player
       -if(game.white)
@@ -46,7 +46,7 @@
         form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
           ='White: None '
           input(type="hidden", name="color", value="w")
-          a(onclick="document.getElementById('myform2"+game._id+"').submit();", href='#')
+          a(href='#', class="join_game")
             ="(join)"
 -else
   h4.players_small

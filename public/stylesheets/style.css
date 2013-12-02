@@ -154,3 +154,16 @@ a {
 .hidden {
   display: none;
 }
+
+.new_game {
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -khtml-border-radius: 10px;
+  border-radius: 10px; 
+  border: 5px solid black;
+  background-image: url(/images/plus.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 210px;
+  margin-top: 20px;
+}
