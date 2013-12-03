@@ -46,6 +46,8 @@ exports.create_game = function(req, res) {
           var c960 = chess_helpers.chess960row();
           game.fen = c960+'/pppppppp/8/8/8/8/PPPPPPPP/'+c960.toUpperCase()+' w KQkq - 0 1';
           break;
+        case 'ai':
+          game.ai_url = post.ai_url;
         default:
           game.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
           break;
@@ -123,6 +125,7 @@ exports.move = function(req,res) {
   var post = req.body;
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
     //Make sure nobody is trying anything sneaky
+    var is_ai = game.game_type === 'ai';
     if((post.move.color == 'b' && res.locals.current_user.id == game.black.id) || (post.move.color == 'w' && res.locals.current_user.id == game.white.id)){
       game.past_fen.push(game.fen);
       game.fen = post.fen;
@@ -130,6 +133,14 @@ exports.move = function(req,res) {
         if (err){
           res.send(500);
           return;
+        }else{
+          if(is_ai){
+            request('http://'+g.ai_url+'?fen='+game.fen, function (error, response, body) {
+              if (!error && response.statusCode == 200) {
+                io.sockets.emit(req.params.id+'/move', {ai: true, move: body});
+              }
+            });
+          }
         }
       });
     }

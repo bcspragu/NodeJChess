@@ -8,18 +8,22 @@ block content
         .field
           ="Name: "
           input(type="text", name="name")
+        .field.hidden.ai_field
+          ="AI Url: "
+          input(type="text", name="ai_url")
         .label="Join as:"
-        .field
-          input(type="radio", name="player", value="w")
-          =" White"
-        .field
-          input(type="radio", name="player", value="b")
-          =" Black"
-        .field
-          input(type="radio", name="player", value="spectator")
-          =" Spectator"
+        .player_radios
+          .field
+            input(type="radio", name="player", value="w")
+            =" White"
+          .field
+            input(type="radio", name="player", value="b")
+            =" Black"
+          .field
+            input(type="radio", name="player", value="spectator")
+            =" Spectator"
         span.field
-          select(name="mode")
+          select(name="mode", id="game_mode")
             option(value="classic") Classic
             option(value="960") 960
             option(value="blitz") Blitz

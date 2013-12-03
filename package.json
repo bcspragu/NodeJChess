@@ -15,6 +15,7 @@
     "mongoose": "*",
     "bcrypt": "*",
     "socket.io": "*",
-    "request": "*"
+    "request": "*",
+    "chess.js": "*"
   }
 }
