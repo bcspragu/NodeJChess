@@ -50,7 +50,7 @@ exports.create_game = function(req, res) {
           game.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
           break;
       }
-
+      game.game_type = post.mode;
       game.save(function (err, g) {
         if (err)
           res.json({error: 'An error has occurred' });
@@ -81,15 +81,22 @@ exports.show = function(req, res) {
 exports.join = function(req,res) {
   var post = req.body;
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
-    if (post.color == "w" && !game.white && !game.completed)
+    var is_ai = game.game_type === 'ai';
+    if (post.color == "w" && !game.white && !game.completed && !is_ai)
       game.white = res.locals.current_user._id;
-    if (post.color == "b" && !game.black && !game.completed)
+    if (post.color == "b" && !game.black && !game.completed && !is_ai)
       game.black = res.locals.current_user._id;
       game.save(function(err, g) {
-      if (err)
+      if (err){
         res.json({error: 'An error has occurred'});
-      else {
-        res.json({redirect: '/games/'+g._id})
+        return;
+      }
+      else if(is_ai){
+        res.json({error: 'This is versus an AI opponent.'});
+        return;
+      }
+      else{
+        res.json({redirect: '/games/'+g._id});
       }
     });
   });
