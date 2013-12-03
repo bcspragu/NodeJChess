@@ -313,11 +313,23 @@ function Chess(id,socket) {
         }).transform('r-30,'+c.width/2+','+c.width/2);
       c.checkify();
       c.socket.on(id+'/move', function (data) {
-        var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
+        var is_ai = !!data.ai;
+        if(!is_ai){
+          var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
+        }else{
+          var pc = "White";
+        }
         $('#'+id).parent().find('.c_turn').text(pc);
 
-        c.logic.load(data.fen);
-        c.movePiece(data.move);
+        if(!is_ai){
+          c.logic.load(data.fen);
+          c.movePiece(data.move);
+        }else{
+          var from = data.move.substring(0,2);
+          var to = data.move.substring(2,4);
+          var move = c.logic.move({from: from, to: to});
+          c.movePiece(move);
+        }
         if(typeof data.move.promotion !== 'undefined'){
           if(pc === 'Black'){
             data.move.promotion = data.move.promotion.toUpperCase();

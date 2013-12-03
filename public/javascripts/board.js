@@ -90,4 +90,18 @@ $(function(){
     });
   });
 
+  $('#game_mode').change(function(){
+    var mode = $(this).find('option:selected').val();
+    var ai_field = $('.ai_field');
+    var player_radios = $('.player_radios');
+    if(mode === 'ai'){
+      ai_field.find('input').val('');
+      ai_field.removeClass('hidden');
+      player_radios.find('input[value!="w"]').attr('disabled',true).prop('checked',false);
+      player_radios.find('input[value="w"]').prop('checked',true);
+    }else{
+      ai_field.addClass('hidden');
+      player_radios.find('input').attr('disabled',false);
+    }
+  });
 });
