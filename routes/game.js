@@ -22,6 +22,23 @@ function check_game_name(game_name)
   return return_string;
 }
 
+function check_message(message)
+{
+  var return_string = "good";
+
+  if(!form_helpers.length_between(message,1,255))
+  {
+    return_string = "bad_length";
+  }
+
+  if(form_helpers.contains_bad_word(message))
+  {
+    return_string = "bad_word";
+  }
+
+  return return_string;
+}
+
 exports.create_game = function(req, res) {
   var post = req.body;
   var game = new Game({name: post.name});
@@ -63,7 +80,7 @@ exports.create_game = function(req, res) {
       });
       break;
     case "bad_length":
-      res.json({error: "Game name is too short, must be between 5 and 20 characters."});
+      res.json({error: "Game name must be between 5 and 20 characters."});
       break;
     case "bad_word":
       res.json({error: "This site is family friendly, please change game name!"});
@@ -216,15 +233,28 @@ exports.board = function(req, res) {
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
     res.render('game_board',{game: game});
   });
-}
+};
 
 exports.game_list = function(req, res) {
   Game.find({}).populate('white').populate('black').sort('name').exec(function(err, games) {
     res.render('game_list',{games: games});
   });
-}
+};
 
 exports.message = function (req, res) {
-  io.sockets.emit('games/'+req.params.id+"/message", {name: res.locals.current_user.name, message: req.body.message});
-  res.send(200);
-}
+  var check_string = check_message(req.body.message);
+
+  switch(check_string)
+  {
+    case "good":
+      io.sockets.emit('games/'+req.params.id+"/message", {name: res.locals.current_user.name, message: req.body.message});
+      res.send(200);
+      break;
+    case "bad_length":
+      res.json({error: "Message is too long! 255 charactes MAX."});
+      break;
+    case "bad_word":
+      res.json({error: "This site is family friendly, please don't curse"});
+      break;
+  }
+};

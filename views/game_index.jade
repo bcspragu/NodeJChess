@@ -41,7 +41,7 @@ block content
         include game_row
   .chat.grid_4
     center="Lobby Chat"
-    textarea#chat_messages.chat_messages
+    textarea#chat_messages.chat_messages(readonly='readonly')
     form(name="lobby_message", id="message", action="/lobby_message/", method="post")
       input(type="hidden", id="room", name="room", value="lobby")
       input(type="submit", id="chat_submit", name="chat_submit",class="right")
