@@ -11,7 +11,7 @@ var form_helpers = require('../helpers/form_helpers.js');
  {
    var return_string = "good";
 
-   if(!form_helpers.length_between(username,5,20))
+   if(!form_helpers.length_between(username,5,15))
     return_string = "bad_username_length";
 
    if(!form_helpers.length_between(password,5,20))

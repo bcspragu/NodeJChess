@@ -2,9 +2,9 @@ extends layout
 
 block content
   .grid_4
+    center="Create a game!"
     #new_game
       form(name="create_game", action="/games/create", method="post")
-        .label="Create a game: "
         .field
           ="Name: "
           input(type="text", name="name")
@@ -31,6 +31,7 @@ block content
           input(type="submit", value="Create Game", id="create_game")
   #game_list.grid_8
     table.striped_table.center
+      caption="Active Games"
       tr
         th="Game Name"
         th="White Player"
@@ -43,7 +44,8 @@ block content
         -var black = games[i].black
         include game_row
   .chat.grid_4
-    textarea#chat_messages.chat_messages
+    center="Lobby Chat"
+    textarea#chat_messages.chat_messages(readonly='readonly')
     form(name="lobby_message", id="message", action="/lobby_message/", method="post")
       input(type="hidden", id="room", name="room", value="lobby")
       input(type="submit", id="chat_submit", name="chat_submit",class="right")
