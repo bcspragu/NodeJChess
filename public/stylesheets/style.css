@@ -139,6 +139,11 @@ a {
 }
 
 .message {
+  position:absolute;
+  margin-left:100px;
+  margin-right:100px;
+  margin-top:200px;
+  z-index:10;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   -khtml-border-radius: 5px;
@@ -146,7 +151,7 @@ a {
   text-align: center;
   background-color: #F00;
   padding: 5px;
-  margin: 10px auto;
+/*  margin: 10px auto; */
   font-size: 14px;
   font-weight: bold;
 }
