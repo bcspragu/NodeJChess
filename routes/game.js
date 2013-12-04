@@ -222,7 +222,7 @@ exports.check = function(req, res) {
     }else if(chess.in_draw()){
       stat = 'Draw';
     }else if(chess.in_stalemate()){
-      state = 'Stalemate';
+      stat = 'Stalemate';
     }
     res.json({checkStatus: stat});
   });
