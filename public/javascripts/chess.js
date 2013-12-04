@@ -268,20 +268,17 @@ function Chess(id,socket) {
     }
   }
 
-  c.checkify = function(){
-    //Check if check/checkmate
-    if(c.logic.in_checkmate()){
-      c.message.attr({text: 'Checkmate'}).animate({opacity: 0.75},250);
-      $.post('/games/'+id+'/game_over');
-    }
-    else if(c.logic.in_check()){
-      c.message.attr({text: 'Check'}).animate({opacity: 0.75},250);
-    }
-    else{
-      c.message.animate({opacity: 0},250,function(){
-        c.message.attr({text: ''});
-      });
-    }
+  c.checkStatus = function(){
+    $.post('/games/'+id+'/check',function(data){
+      if(data.checkStatus !== ''){
+        c.message.attr({text: data.checkStatus}).animate({opacity: 0.75},250);
+      }
+      else{
+        c.message.animate({opacity: 0},250,function(){
+          c.message.attr({text: ''});
+        });
+      }
+    });
   }
 
   if(c.valid){
@@ -311,9 +308,14 @@ function Chess(id,socket) {
           'font-size': 100*(c.width/1000),
           opacity: 0
         }).transform('r-30,'+c.width/2+','+c.width/2);
-      c.checkify();
+      c.checkStatus();
       c.socket.on(id+'/move', function (data) {
-        var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
+        var is_ai = !!data.ai;
+        if(!is_ai){
+          var pc = data.fen.split(" ")[1] === 'w' ? "White" : "Black";
+        }else{
+          var pc = "White";
+        }
         $('#'+id).parent().find('.c_turn').text(pc);
 
         c.logic.load(data.fen);
@@ -324,7 +326,7 @@ function Chess(id,socket) {
           }
           c.changePiece(data.move.to, data.move.promotion);
         }
-        c.checkify();
+        c.checkStatus();
       });
     },'json');
   }

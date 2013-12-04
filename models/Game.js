@@ -6,9 +6,6 @@ var GameSchema = new mongoose.Schema({
     type: String,
     index: true
   },
-  private: {
-    type: Boolean
-  },
   white: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',

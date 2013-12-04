@@ -22,12 +22,12 @@
         span.black_name
           -if (game.black._id == current_user.id) 
             a(href="/users")=game.black.name 
-            =' (' + game.black.elo_rating + ')'
+            =' '
             a(href="/games/"+game._id+"/leave", class="quit_game")
               ="(quit)"
           -else
             a(href="/users")=game.black.name 
-            =' (' + game.black.elo_rating + ')'
+            =' '
       -else
         form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
           ='Black: None '
@@ -40,12 +40,12 @@
         span.white_name
           -if (game.white._id == current_user.id) 
             a(href="/users")=game.white.name 
-            =' (' + game.white.elo_rating + ')'
+            =' '
             a(href="/games/"+game._id+"/leave", class="quit_game")
               ="(quit)"
           -else
             a(href="/users")=game.white.name 
-            =' (' + game.white.elo_rating + ')'
+            =' '
       -else
         form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
           ='White: None '

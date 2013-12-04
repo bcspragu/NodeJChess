@@ -67,10 +67,21 @@ $(function(){
 
   $('body').on('click','.new_game',function(){
     var current = $(this);
-    var next = current.parent().next().find('.board_selector');
-    current.removeClass('new_game');
+    current.addClass('game_list_holder').removeClass('new_game');
     current.load('/games/game_list');
-    //next.removeClass('board_selector').addClass('new_game');
+  });
+
+  $('.body').on('click','.add_game',function(){
+    var id = $(this).attr('id');
+    $(this).parents('.game_list_holder').removeClass('game_list_holder');
+    var next = $(this).parents('.grid_4').nextAll('.grid_4').first().children().first();
+    $(this).parent().load('/games/'+id+'/board',function(){
+      $('#'+id).parent().css({opacity: 0});
+      next.css({opacity: 0});
+      new Chess(id,socket);
+      $('#'+id).parent().animate({opacity: 1},500);
+      next.addClass('new_game').removeClass('board_selector').animate({opacity: 1},500);
+    })
   });
 
   $('#message').submit(function(e){
@@ -94,4 +105,18 @@ $(function(){
     });
   });
 
+  $('#game_mode').change(function(){
+    var mode = $(this).find('option:selected').val();
+    var ai_field = $('.ai_field');
+    var player_radios = $('.player_radios');
+    if(mode === 'ai'){
+      ai_field.find('input').val('');
+      ai_field.removeClass('hidden');
+      player_radios.find('input[value!="w"]').attr('disabled',true).prop('checked',false);
+      player_radios.find('input[value="w"]').prop('checked',true);
+    }else{
+      ai_field.addClass('hidden');
+      player_radios.find('input').attr('disabled',false);
+    }
+  });
 });
