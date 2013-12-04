@@ -247,15 +247,14 @@ exports.message = function (req, res) {
   {
     case "good":
       io.sockets.emit('games/'+req.params.id+"/message", {name: res.locals.current_user.name, message: req.body.message});
-      res.send(200);
-      res.json("");
-      break;
+      res.json({});
+      return;
     case "bad_length":
       res.json({error: "Message is too long! 255 charactes MAX."});
-      break;
+      return;
     case "bad_word":
       res.json({error: "This site is family friendly, please don't curse"});
-      break;
+      return;
   }
 };
 
