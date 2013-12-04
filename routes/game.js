@@ -197,9 +197,7 @@ exports.info = function(req, res) {
 }
 
 exports.super_spectator = function(req,res) {
-  Game.find({}).populate('white').populate('black').sort('name').exec(function(err,games){
-    res.render('super_spectator', {title: 'NodeChess', games: games});
-  });
+  res.render('super_spectator', {title: 'NodeChess'});
 };
 
 /* ELO Calculations
@@ -237,7 +235,7 @@ exports.board = function(req, res) {
 };
 
 exports.game_list = function(req, res) {
-  Game.find({}).populate('white').populate('black').sort('name').exec(function(err, games) {
+  Game.find({completed: false}).populate('white').populate('black').sort('name').exec(function(err, games) {
     res.render('game_list',{games: games});
   });
 };

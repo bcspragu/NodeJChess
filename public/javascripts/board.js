@@ -67,10 +67,17 @@ $(function(){
 
   $('body').on('click','.new_game',function(){
     var current = $(this);
-    var next = current.parent().next().find('.board_selector');
     current.removeClass('new_game');
-    current.load('/games/game_list');
-    //next.removeClass('board_selector').addClass('new_game');
+    current.append('<div class="populated_board"></div>').load('/games/game_list');
+  });
+
+  $('.body').on('click','.add_game',function(){
+    var id = $(this).attr('id');
+    var next = $(this).parents('.grid_4').nextAll('.grid_4').first().children().first();
+    $(this).parent().load('/games/'+id+'/board',function(){
+      new Chess(id,socket);
+      next.addClass('new_game').removeClass('board_selector');
+    })
   });
 
   $('#message').submit(function(e){
