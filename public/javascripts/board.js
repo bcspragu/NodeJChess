@@ -4,7 +4,7 @@ $(function(){
     var name = data.name;
     var message = data.message;
     var chatbox = $("#chat_messages");
-    chatbox.text(chatbox.text() + name+": "+message+"\n");
+    chatbox.html(chatbox.html() +"<div class='chat_message'><b>"+name+"</b>: "+message+"</div>");
     chatbox.scrollTop(chatbox[0].scrollHeight);
   };
 

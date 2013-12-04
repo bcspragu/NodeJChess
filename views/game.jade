@@ -6,9 +6,10 @@ block content
     -var verbose = true;
     include game_board
   .grid_4.game_chat
-    textarea#chat_messages.chat_messages(readonly='readonly')
+    #chat_messages.chat_messages
     form(name="/game_message", id="message", action="/games/"+game._id+"/message/", method="post")
       input(type="hidden", id="room", name="room", value=game.id)
       input(type="submit", id="chat_submit", name="chat_submit", class="right")
       .inputbox
-        input(type="text", id="chat_input", name="chat_input")
+        input(type="text", id="chat_input", name="chat_input", autocomplete="off")
+

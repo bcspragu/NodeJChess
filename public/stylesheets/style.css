@@ -183,6 +183,13 @@ a {
   max-height: 300px;
   background-color:white;
   width: 214px; 
+  border: 1px solid black;
+  overflow: scroll;
+  padding: 2px;
+}
+
+.chat_message {
+  display:block;
 }
 
 .inputbox { 
