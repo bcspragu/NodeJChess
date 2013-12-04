@@ -92,7 +92,7 @@ $(function(){
       url: "/games/"+game_id+"/message",
       data: {message: $("#chat_input").val()},
       dataType: "json",
-      complete: function(data) {
+      success: function(data) {
         if(!data.error)
         {
           $("#chat_input").val("");
