@@ -1,6 +1,7 @@
 var mongoose    = require('mongoose'),
     User = require('../models/User'),
-    Game = require('../models/Game');
+    Game = require('../models/Game'),
+    chess = require('chess.js').Chess();
 
 var form_helpers = require('../helpers/form_helpers.js');
 var chess_helpers = require('../helpers/chess_helpers.js');
@@ -146,6 +147,7 @@ exports.move = function(req,res) {
     if((post.move.color == 'b' && res.locals.current_user.id == game.black.id) || (post.move.color == 'w' && res.locals.current_user.id == game.white.id)){
       game.past_fen.push(game.fen);
       game.fen = post.fen;
+      isOver(game);
       game.save(function(err, g) {
         if (err){
           res.send(500);
@@ -154,7 +156,19 @@ exports.move = function(req,res) {
           if(is_ai){
             request('http://'+g.ai_url+'?fen='+game.fen, function (error, response, body) {
               if (!error && response.statusCode == 200) {
-                io.sockets.emit(req.params.id+'/move', {ai: true, move: body});
+                var from = body.substring(0,2);
+                var to = body.substring(2,4);
+                var promotion = body.substring(4);
+                if(body.length == 5){
+                  var move = chess.move({from: from, to: to, promotion: promotion});
+                }else{
+                  var move = chess.move({from: from, to: to});
+                }
+                g.past_fen.push(g.fen);
+                g.fen = chess.fen();
+                g.save();
+                isOver(g);
+                io.sockets.emit(req.params.id+'/move', {fen: g.fen, move: move});
               }
             });
           }
@@ -199,46 +213,22 @@ C  = constant
 */
 
 
-exports.game_over = function(req, res) {
+exports.check = function(req, res) {
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
-    //Make sure nobody is trying anything sneaky
-    if(!game.completed){
-      game.completed = true;
-      if(game.fen.split(' ')[1] == 'w'){ //White won
-        var white = game.white;
-        var black = game.black;
-        var expected_score = Math.abs(white.elo_rating - black.elo_rating);
-        white.games_played += 1;
-        black.games_played += 1;
-        white.wins += 1;
-        black.losses += 1;
-        white.elo_rating = white.elo_rating + 30 * (1 - expected_score);
-        black.elo_rating = black.elo_rating + 30 * (0 - expected_score);
-        white.save();
-        black.save();
-      }else{ //Black won
-        var white = game.white;
-        var black = game.black;
-        var expected_score = Math.abs(white.elo_rating - black.elo_rating);
-        white.games_played += 1;
-        black.games_played += 1;
-        black.wins += 1;
-        white.losses += 1;
-        white.elo_rating = white.elo_rating + 30 * (0 - expected_score);
-        black.elo_rating = black.elo_rating + 30 * (1 - expected_score);
-        white.save();
-        black.save();
-      }
-      game.save(function(err, g) {
-        if (err){
-          res.send(500);
-          return;
-        }
-      });
+    chess.load(game.fen);
+    var stat = '';
+    if(chess.in_check()){
+      stat = 'Check';
+    }else if(chess.in_checkmate()){
+      stat = 'Checkmate';
+    }else if(chess.in_draw()){
+      stat = 'Draw';
+    }else if(chess.in_stalemate()){
+      state = 'Stalemate';
     }
+    res.json({checkStatus: stat});
   });
-  res.send(200);
-};
+}
 
 exports.board = function(req, res) {
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
@@ -269,3 +259,38 @@ exports.message = function (req, res) {
       break;
   }
 };
+
+function isOver(game){
+  chess.load(game.fen);
+  if(chess.in_checkmate() && !game.completed){
+    game.completed = true;
+    var is_ai = game.game_type === 'ai';
+    if(!is_ai){
+      if(game.fen.split(' ')[1] == 'w'){ //White won
+          var winner = game.white;
+          var loser = game.black;
+      }else{ //Black won
+        var loser = game.white;
+        var winner = game.black;
+        var expected_score = Math.abs(white.elo_rating - black.elo_rating);
+      }
+      var expected_score = Math.abs(winner.elo_rating - loser.elo_rating);
+      winner.games_played += 1;
+      loser.games_played += 1;
+      winner.wins += 1;
+      loser.losses += 1;
+      winner.elo_rating = winner.elo_rating + 30 * (1 - expected_score);
+      loser.elo_rating = black.elo_rating + 30 * (0 - expected_score);
+      winner.save();
+      loser.save();
+    }
+    game.save(function(err, g) {
+      if (err){
+        res.send(500);
+        return;
+      }
+    });
+    return true;
+  }
+  return game.completed;
+}

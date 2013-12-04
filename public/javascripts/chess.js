@@ -268,20 +268,17 @@ function Chess(id,socket) {
     }
   }
 
-  c.checkify = function(){
-    //Check if check/checkmate
-    if(c.logic.in_checkmate()){
-      c.message.attr({text: 'Checkmate'}).animate({opacity: 0.75},250);
-      $.post('/games/'+id+'/game_over');
-    }
-    else if(c.logic.in_check()){
-      c.message.attr({text: 'Check'}).animate({opacity: 0.75},250);
-    }
-    else{
-      c.message.animate({opacity: 0},250,function(){
-        c.message.attr({text: ''});
-      });
-    }
+  c.checkStatus = function(){
+    $.post('/games/'+id+'/check',function(data){
+      if(data.checkStatus !== ''){
+        c.message.attr({text: data.checkStatus}).animate({opacity: 0.75},250);
+      }
+      else{
+        c.message.animate({opacity: 0},250,function(){
+          c.message.attr({text: ''});
+        });
+      }
+    });
   }
 
   if(c.valid){
@@ -311,7 +308,7 @@ function Chess(id,socket) {
           'font-size': 100*(c.width/1000),
           opacity: 0
         }).transform('r-30,'+c.width/2+','+c.width/2);
-      c.checkify();
+      c.checkStatus();
       c.socket.on(id+'/move', function (data) {
         var is_ai = !!data.ai;
         if(!is_ai){
@@ -321,22 +318,15 @@ function Chess(id,socket) {
         }
         $('#'+id).parent().find('.c_turn').text(pc);
 
-        if(!is_ai){
-          c.logic.load(data.fen);
-          c.movePiece(data.move);
-        }else{
-          var from = data.move.substring(0,2);
-          var to = data.move.substring(2,4);
-          var move = c.logic.move({from: from, to: to});
-          c.movePiece(move);
-        }
+        c.logic.load(data.fen);
+        c.movePiece(data.move);
         if(typeof data.move.promotion !== 'undefined'){
           if(pc === 'Black'){
             data.move.promotion = data.move.promotion.toUpperCase();
           }
           c.changePiece(data.move.to, data.move.promotion);
         }
-        c.checkify();
+        c.checkStatus();
       });
     },'json');
   }

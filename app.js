@@ -115,7 +115,7 @@ app.get('/games/:id', checkAuth, game.show);
 app.post('/games/:id/join', checkAuth, game.join);
 app.post('/games/:id/move', checkAuth, game.move);
 app.post('/games/:id/info', checkAuth, game.info);
-app.post('/games/:id/game_over', checkAuth, game.game_over);
+app.post('/games/:id/check', checkAuth, game.check);
 app.get('/games/:id/leave', checkAuth, game.leave);
 app.get('/games/:id/board', checkAuth, game.board);
 app.post('/games/:id/message', checkAuth, game.message);
