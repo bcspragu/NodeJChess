@@ -44,11 +44,11 @@ block content
         include game_row
   .chat.grid_4
     center="Lobby Chat"
-    textarea#chat_messages.chat_messages(readonly='readonly')
+    #chat_messages.chat_messages
     form(name="lobby_message", id="message", action="/lobby_message/", method="post")
       input(type="hidden", id="room", name="room", value="lobby")
       input(type="submit", id="chat_submit", name="chat_submit",class="right")
       .inputbox
-        input(type="text", id="chat_input", name="chat_input")
+        input(type="text", id="chat_input", name="chat_input", autocomplete="off")
 
 
