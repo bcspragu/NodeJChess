@@ -81,11 +81,15 @@ $(function(){
       url: "/games/"+game_id+"/message",
       data: {message: $("#chat_input").val()},
       dataType: "json",
-      success: function(data) {
+      complete: function(data) {
         if(!data.error)
+        {
           $("#chat_input").val("");
+        }
         else
+        {
           $(".message").text(data.error).removeClass('hidden');
+        }
       }
     });
   });
