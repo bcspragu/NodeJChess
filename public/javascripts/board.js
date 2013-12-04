@@ -67,16 +67,20 @@ $(function(){
 
   $('body').on('click','.new_game',function(){
     var current = $(this);
-    current.removeClass('new_game');
-    current.append('<div class="populated_board"></div>').load('/games/game_list');
+    current.addClass('game_list_holder').removeClass('new_game');
+    current.load('/games/game_list');
   });
 
   $('.body').on('click','.add_game',function(){
     var id = $(this).attr('id');
+    $(this).parents('.game_list_holder').removeClass('game_list_holder');
     var next = $(this).parents('.grid_4').nextAll('.grid_4').first().children().first();
     $(this).parent().load('/games/'+id+'/board',function(){
+      $('#'+id).parent().css({opacity: 0});
+      next.css({opacity: 0});
       new Chess(id,socket);
-      next.addClass('new_game').removeClass('board_selector');
+      $('#'+id).parent().animate({opacity: 1},500);
+      next.addClass('new_game').removeClass('board_selector').animate({opacity: 1},500);
     })
   });
 

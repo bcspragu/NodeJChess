@@ -194,3 +194,7 @@ a {
  .populated_board {
    margin-bottom: 20px;
  }
+
+ .game_list_holder {
+   //TODO Force Dan or Reed to make nice looking CSS for this
+ }
