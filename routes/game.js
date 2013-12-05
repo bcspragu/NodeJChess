@@ -83,7 +83,7 @@ exports.create_game = function(req, res) {
       });
       break;
     case "bad_length":
-      res.json({error: "Game name must be between 5 and 20 characters."});
+      res.json({error: "Game name must be between 1 and 12 characters."});
       break;
     case "bad_word":
       res.json({error: "This site is family friendly, please change game name!"});
