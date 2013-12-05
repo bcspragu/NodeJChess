@@ -13,7 +13,8 @@ block content
         -for (var i = 0; i < users.length; i++)
           -var user = users[i]
           tr   
-            td=user.name
+            td
+              a(href="/users/"+user.name)= user.name
             td=user.elo_rating
             td=user.games_played
             td=user.wins

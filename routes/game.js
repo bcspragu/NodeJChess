@@ -263,13 +263,14 @@ function checkCheck(game){
           var loser = game.white;
           var winner = game.black;
         }
-        var expected_score = Math.abs(winner.elo_rating - loser.elo_rating);
+        var expected_score = 1 / (1 + Math.pow(10,(winner.elo_rating - loser.elo_rating)/400));
+        console.log(expected_score);
         winner.games_played += 1;
         loser.games_played += 1;
         winner.wins += 1;
         loser.losses += 1;
-        winner.elo_rating = winner.elo_rating + 30 * (1 - expected_score);
-        loser.elo_rating = loser.elo_rating + 30 * (0 - expected_score);
+        winner.elo_rating = winner.elo_rating + Math.round(15 * (1 - expected_score));
+        loser.elo_rating = loser.elo_rating + Math.round(15 * (0 - expected_score));
         winner.save();
         loser.save();
       }
