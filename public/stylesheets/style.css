@@ -140,9 +140,6 @@ a {
 
 .message {
   position:absolute;
-  margin-left:100px;
-  margin-right:100px;
-  margin-top:200px;
   z-index:10;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -151,9 +148,13 @@ a {
   text-align: center;
   background-color: #F00;
   padding: 5px;
-/*  margin: 10px auto; */
   font-size: 14px;
   font-weight: bold;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 20%;
+  top: 250px;
 }
 
 .hidden {
@@ -182,6 +183,13 @@ a {
   max-height: 300px;
   background-color:white;
   width: 214px; 
+  border: 1px solid black;
+  overflow: scroll;
+  padding: 2px;
+}
+
+.chat_message {
+  display:block;
 }
 
 .inputbox { 

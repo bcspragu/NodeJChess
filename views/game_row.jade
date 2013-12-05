@@ -9,12 +9,16 @@ tr
       form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
         input(type="hidden", name="color", value="w")
         a(href='#', class="join_game")
-          ="None"
+          ="none"
   td
     -if (black)
       =black.name
     -else
       form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
-        input(type="hidden", name="color", value="b")
-        a(href='#', class="join_game")
-          ="None"
+        -if(game.game_type === 'ai')
+            input(type="hidden", name="color", value="b")
+            ="AI"
+        -else
+          input(type="hidden", name="color", value="b")
+          a(href='#', class="join_game")
+            ="none"

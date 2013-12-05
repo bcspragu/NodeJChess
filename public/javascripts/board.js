@@ -4,7 +4,7 @@ $(function(){
     var name = data.name;
     var message = data.message;
     var chatbox = $("#chat_messages");
-    chatbox.text(chatbox.text() + name+": "+message+"\n");
+    chatbox.html(chatbox.html() +"<div class='chat_message'><b>"+name+"</b>: "+message+"</div>");
     chatbox.scrollTop(chatbox[0].scrollHeight);
   };
 
@@ -40,11 +40,11 @@ $(function(){
         if (data.redirect) {
           window.location.href = data.redirect;
         }
-        else {
-          $(".message").text(data.error).removeClass('hidden');
+        else if(data.error) {
+          animateErrorMessage(data.error);
         }
       }
-    }); 
+    });
   });
 
   $('.quit_game').click(function(e){
@@ -58,8 +58,8 @@ $(function(){
         if (data.redirect) {
           window.location.href = data.redirect;
         }
-        else {
-          $(".message").text(data.error).removeClass('hidden');
+        else if(data.error) {
+          animatedErrorMessage(data.error);
         }
       }
     }); 
@@ -93,13 +93,13 @@ $(function(){
       data: {message: $("#chat_input").val()},
       dataType: "json",
       success: function(data) {
-        if(!data.error)
+        if(typeof data.error === 'undefined')
         {
           $("#chat_input").val("");
         }
         else
         {
-          $(".message").text(data.error).removeClass('hidden');
+          animateErrorMessage(data.error);
         }
       }
     });
@@ -120,3 +120,14 @@ $(function(){
     }
   });
 });
+
+function animateErrorMessage(text){
+  var message = $('.message');
+  message.text(text).css({opacity: 0}).removeClass('hidden').animate({opacity: 1}, 500, function(){
+    setTimeout(function(){
+      message.animate({opacity: 0},1000,function(){
+        message.addClass('hidden').css({opacity: 1});
+      });
+    },1000);
+  });
+}
