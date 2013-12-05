@@ -10,7 +10,7 @@ function check_game_name(game_name)
 {
   var return_string = "good";
 
-  if(!form_helpers.length_between(game_name,5,20))
+  if(!form_helpers.length_between(game_name,1,12))
   {
     return_string = "bad_length";
   }
