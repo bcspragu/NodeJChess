@@ -272,7 +272,7 @@ function Chess(id,socket) {
     if(stat !== ''){
         c.message.attr({text: stat}).animate({opacity: 0.75},250);
     }
-    else if(type_of){
+    else if(typeof(stat) !== 'undefined'){
       c.message.animate({opacity: 0},250,function(){
         c.message.attr({text: ''});
       });

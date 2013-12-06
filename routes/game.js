@@ -245,7 +245,8 @@ exports.board = function(req, res) {
 };
 
 exports.game_list = function(req, res) {
-  Game.find({completed: false}).populate('white').populate('black').sort('name').exec(function(err, games) {
+  var exclude = req.body.exclude || [];
+  Game.find({completed: false}).where('_id').nin(exclude).populate('white').populate('black').sort('name').limit(100).exec(function(err, games) {
     res.render('game_list',{games: games});
   });
 };

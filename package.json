@@ -16,6 +16,7 @@
     "bcrypt": "*",
     "socket.io": "*",
     "request": "*",
-    "chess.js": "*"
+    "chess.js": "*",
+    "connect-mongo": "*"
   }
 }

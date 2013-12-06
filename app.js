@@ -10,9 +10,10 @@ var game = require('./routes/game');
 var application = require('./routes/application');
 var http = require('http');
 var path = require('path');
-var mongoose = require('mongoose'),
-    User = require('./models/User'),
-    Game = require('./models/Game');
+var mongoose = require('mongoose');
+var User = require('./models/User');
+var Game = require('./models/Game');
+var MongoStore = require('connect-mongo')(express);
 
 app = express();
 var server = http.createServer(app);
@@ -36,8 +37,13 @@ app.use(express.favicon(path.join(__dirname, 'public/images/favicon.ico')));  //
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
-app.use(express.session());
+app.use(express.cookieParser('something super secret?'));
+app.use(express.session({
+  secret: 'something super secret?',
+  store: new MongoStore({
+    db: 'sessions'
+  })
+}));
 
 //If we aren't in development, we're on heroku and need to use long polling
 if ('development' != app.get('env')) {
@@ -106,7 +112,7 @@ app.get('/logout', application.logout);
 
 //These actions are protected by login system, checkAuth
 app.get('/', checkAuth, routes.index);
-app.get('/games/game_list', checkAuth, game.game_list);
+app.post('/games/game_list', checkAuth, game.game_list);
 app.get('/games', checkAuth, routes.index);
 app.get('/super_spectator', checkAuth, game.super_spectator);
 app.get('/users', checkAuth, user.list);

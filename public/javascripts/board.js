@@ -105,7 +105,11 @@ $(function(){
   $('body').on('click','.new_game',function(){
     var current = $(this);
     current.addClass('game_list_holder').removeClass('new_game');
-    current.load('/games/game_list');
+    var games = [];
+    $('.live_game').each(function(){
+      games.push($(this).find('.game_board').attr('id'));
+    });
+    current.load('/games/game_list',{exclude: games});
   });
 
   $('.body').on('click','.add_game',function(){
@@ -114,7 +118,7 @@ $(function(){
     var next = $(this).parents('.grid_4').nextAll('.grid_4').first().children().first();
     $(this).parent().load('/games/'+id+'/board',function(){
       $('#'+id).parent().css({opacity: 0});
-      holder.removeClass('game_list_holder');
+      holder.removeClass('game_list_holder').addClass('live_game');
       next.css({opacity: 0});
       new Chess(id,socket);
       $('#'+id).parent().animate({opacity: 1},500);
