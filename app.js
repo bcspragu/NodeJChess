@@ -41,7 +41,8 @@ app.use(express.cookieParser('something super secret?'));
 app.use(express.session({
   secret: 'something super secret?',
   store: new MongoStore({
-    db: 'sessions'
+    url: mongoUri,
+    mongoose_connection: db
   })
 }));
 
