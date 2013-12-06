@@ -71,16 +71,37 @@ exports.create_game = function(req, res) {
           break;
       }
       game.game_type = post.mode;
-      game.save(function (err, g) {
-        if (err)
-          res.json({error: 'An error has occurred' });
-        else {
-          res.json({redirect: '/games/'+g._id});
-        }
-      });
-      app.render('game_row',{game: game, white: white, black: black},function(err,html){
-        io.sockets.emit('create', {row: html, name: game.name});
-      });
+      if(post.mode !== 'ai'){
+        game.save(function (err, g) {
+          if (err)
+            res.json({error: 'An error has occurred' });
+          else {
+            res.json({redirect: '/games/'+g._id});
+          }
+        });
+        app.render('game_row',{game: game, white: white, black: black},function(err,html){
+          io.sockets.emit('create', {row: html, name: game.name});
+        });
+        break;
+      }else{
+        //Send the start pos, check for a valid response
+        request('http://'+post.ai_url+'?fen=rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', function (error, response, body) {
+          if (!error && response.statusCode == 200 && body.length == 4) {
+            game.save(function (err, g) {
+              if (err)
+                res.json({error: 'An error has occurred' });
+              else {
+                res.json({redirect: '/games/'+g._id});
+              }
+            });
+            app.render('game_row',{game: game, white: white, black: black},function(err,html){
+              io.sockets.emit('create', {row: html, name: game.name});
+            });
+          }else{
+              res.json({error: 'Invalid AI' });
+          }
+        });
+      }
       break;
     case "bad_length":
       res.json({error: "Game name must be between 5 and 20 characters."});

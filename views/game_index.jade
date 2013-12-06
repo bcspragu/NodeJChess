@@ -28,7 +28,10 @@ block content
             option(value="960") 960
             option(value="ai") AI
           input(type="submit", value="Create Game", id="create_game")
-    .loading
+    .loading.hidden
+      img(src="/images/spinner.gif")
+      br
+      ="Checking for valid AI..."
   #game_list.grid_8
     table.striped_table.center
       caption="Active Games"

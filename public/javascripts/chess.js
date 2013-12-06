@@ -269,11 +269,10 @@ function Chess(id,socket) {
   }
 
   c.setStatus = function(stat){
-    debugger;
     if(stat !== ''){
         c.message.attr({text: stat}).animate({opacity: 0.75},250);
     }
-    else{
+    else if(type_of){
       c.message.animate({opacity: 0},250,function(){
         c.message.attr({text: ''});
       });
@@ -322,9 +321,9 @@ function Chess(id,socket) {
           var pc = "White";
         }
         $('#'+id).parent().find('.c_turn').text(pc);
-        c.setStatus(data.checkStatus);
         c.logic.load(data.fen);
         c.movePiece(data.move);
+        c.setStatus(data.checkStatus);
         if(typeof data.move.promotion !== 'undefined'){
           if(pc === 'Black'){
             data.move.promotion = data.move.promotion.toUpperCase();

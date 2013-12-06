@@ -37,7 +37,7 @@ $(function(){
   }
   socket.on('games/lobby/message', receive_message);
 
-  $('.body').on('click','.join_game, #create_game, .login, .create_user, .request_move',function(e){
+  $('.body').on('click','.join_game, .login, .create_user, .request_move',function(e){
     e.preventDefault();
     var form = $(this).parents('form');
     var url = form.attr('action');
@@ -55,6 +55,33 @@ $(function(){
         }
       }
     });
+  });
+
+  $('#create_game').click(function(e){
+    e.preventDefault();
+    var loading = $('.loading');
+    loading.css({opacity: 0}).removeClass('hidden');
+    loading.animate({opacity: 1},500);
+    var form = $(this).parents('form');
+    var url = form.attr('action');
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: form.serialize(),
+      dataType: "json",
+      success: function(data) {
+        if (data.redirect) {
+          window.location.href = data.redirect;
+        }
+        else if(data.error) {
+          animateErrorMessage(data.error);
+          loading.animate({opacity: 0},500,function(){
+            loading.addClass('.hidden');
+          });
+        }
+      }
+    });
+
   });
 
   $('.quit_game').click(function(e){

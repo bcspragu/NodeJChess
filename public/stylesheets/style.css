@@ -267,3 +267,10 @@ a {
   background: -moz-linear-gradient(top, #ebebeb, white 10%);  
   background: -webkit-gradient(linear, 0 0, 0 10%, from(#ebebeb), to(white)); 
 }
+
+.loading {
+  background-color: #F0F0FF;
+  padding: 10px;
+  border: 1px solid black;
+  text-align: center;
+}
