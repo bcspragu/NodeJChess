@@ -17,12 +17,17 @@ var MongoStore = require('connect-mongo')(express);
 var RedisStore = require('socket.io/lib/stores/redis');
 if (process.env.REDISTOGO_URL) {
   var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-  var pub = require("redis").createClient(rtg.port, rtg.hostname);
+  var redis = require("redis");
+
+  var pub = redis.createClient(rtg.port, rtg.hostname);
   pub.auth(rtg.auth.split(":")[1]);
-  var sub = require("redis").createClient(rtg.port, rtg.hostname);
+
+  var sub = redis.createClient(rtg.port, rtg.hostname);
   sub.auth(rtg.auth.split(":")[1]);
-  var client = require("redis").createClient(rtg.port, rtg.hostname);
+
+  var client = redis.createClient(rtg.port, rtg.hostname);
   client.auth(rtg.auth.split(":")[1]);
+
 } else {
   var pub = require("redis").createClient();
   var sub = require("redis").createClient();
