@@ -29,7 +29,7 @@ html
         -if (typeof current_user !== 'undefined')
           #user_status.right
             b="You are logged in as "
-              a(href="/users")=current_user.name
+              a(href="/users/"+current_user.name)=current_user.name
               =" ("+current_user.elo_rating+") "
             a(href="/logout")="(Logout)"
     .container_16
