@@ -71,16 +71,41 @@ exports.create_game = function(req, res) {
           break;
       }
       game.game_type = post.mode;
-      game.save(function (err, g) {
-        if (err)
-          res.json({error: 'An error has occurred' });
-        else {
-          res.json({redirect: '/games/'+g._id});
-        }
-      });
-      app.render('game_row',{game: game, white: white, black: black},function(err,html){
-        io.sockets.emit('create', {row: html, name: game.name});
-      });
+      if(post.mode !== 'ai'){
+        game.save(function (err, g) {
+          if (err)
+            res.json({error: 'An error has occurred' });
+          else {
+            res.json({redirect: '/games/'+g._id});
+          }
+        });
+        app.render('game_row',{game: game, white: white, black: black},function(err,html){
+          io.sockets.emit('create', {row: html, name: game.name});
+        });
+        break;
+      }else{
+        //Send the start pos, check for a valid response
+        request('http://'+post.ai_url+'?fen=rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', function (error, response, body) {
+          if (!error && response.statusCode == 200 && body.length == 4) {
+            game.save(function (err, g) {
+              if (err){
+                res.json({error: 'An error has occurred' });
+                return;
+              }
+              else {
+                res.json({redirect: '/games/'+g._id});
+                return;
+              }
+            });
+            app.render('game_row',{game: game, white: white, black: black},function(err,html){
+              io.sockets.emit('create', {row: html, name: game.name});
+            });
+          }else{
+              res.json({error: 'Invalid AI' });
+              return;
+          }
+        });
+      }
       break;
     case "bad_length":
       res.json({error: "Game name must be between 1 and 12 characters."});
@@ -148,6 +173,51 @@ exports.move = function(req,res) {
       game.past_fen.push(game.fen);
       game.fen = post.fen;
       var mate = checkCheck(game);
+      switch(mate){
+        case 'Checkmate':
+          game.completed = true;
+          if(!is_ai){
+            if(game.fen.split(' ')[1] == 'b'){ //White won
+                var winner = game.white;
+                var loser = game.black;
+            }else{ //Black won
+              var loser = game.white;
+              var winner = game.black;
+            }
+            var expected_score = 1 / (1 + Math.pow(10,(winner.elo_rating - loser.elo_rating)/400));
+            winner.games_played += 1;
+            loser.games_played += 1;
+            winner.wins += 1;
+            loser.losses += 1;
+            winner.elo_rating = winner.elo_rating + Math.round(15 * (1 - expected_score));
+            loser.elo_rating = loser.elo_rating + Math.round(15 * (0 - expected_score));
+            winner.save();
+            loser.save();
+          }
+          break;
+        case 'Stalemate':
+          game.completed = true;
+          if(!is_ai){
+            var white = game.white;
+            var black = game.black;
+            white.games_played += 1;
+            black.games_played += 1;
+            white.save();
+            black.save();
+          }
+          break;
+        case 'Draw':
+          game.completed = true;
+          if(!is_ai){
+            var white = game.white;
+            var black = game.black;
+            white.games_played += 1;
+            black.games_played += 1;
+            white.save();
+            black.save();
+          }
+          break;
+      }
       game.save(function(err, g) {
         if (err){
           res.send(500);
@@ -166,18 +236,64 @@ exports.move = function(req,res) {
                 }
                 g.past_fen.push(g.fen);
                 g.fen = chess.fen();
+                mate = checkCheck(g);
+                switch(mate){
+                  case 'Checkmate':
+                    g.completed = true;
+                    if(!is_ai){
+                      if(g.fen.split(' ')[1] == 'b'){ //White won
+                          var winner = game.white;
+                          var loser = game.black;
+                      }else{ //Black won
+                        var loser = game.white;
+                        var winner = game.black;
+                      }
+                      var expected_score = 1 / (1 + Math.pow(10,(winner.elo_rating - loser.elo_rating)/400));
+                      winner.games_played += 1;
+                      loser.games_played += 1;
+                      winner.wins += 1;
+                      loser.losses += 1;
+                      winner.elo_rating = winner.elo_rating + Math.round(15 * (1 - expected_score));
+                      loser.elo_rating = loser.elo_rating + Math.round(15 * (0 - expected_score));
+                      winner.save();
+                      loser.save();
+                    }
+                    break;
+                  case 'Stalemate':
+                    game.completed = true;
+                    if(!is_ai){
+                      var white = game.white;
+                      var black = game.black;
+                      white.games_played += 1;
+                      black.games_played += 1;
+                      white.save();
+                      black.save();
+                    }
+                    break;
+                  case 'Draw':
+                    game.completed = true;
+                    if(!is_ai){
+                      var white = game.white;
+                      var black = game.black;
+                      white.games_played += 1;
+                      black.games_played += 1;
+                      white.save();
+                      black.save();
+                    }
+                    break;
+                }
                 g.save();
-                checkCheck(g);
-                io.sockets.emit(req.params.id+'/move', {fen: g.fen, move: move});
+                io.sockets.emit(req.params.id+'/move', {fen: g.fen, move: move, checkStatus: mate});
               }
             });
           }
+          io.sockets.emit(req.params.id+'/move', {fen: post.fen, move: post.move, checkStatus: mate});
+          res.send(200);
+          return;
         }
       });
     }
   });
-  io.sockets.emit(req.params.id+'/move', {fen: post.fen, move: post.move});
-  res.send(200);
 }
 
 exports.info = function(req, res) {
@@ -224,7 +340,8 @@ exports.board = function(req, res) {
 };
 
 exports.game_list = function(req, res) {
-  Game.find({completed: false}).populate('white').populate('black').sort('name').exec(function(err, games) {
+  var exclude = req.body.exclude || [];
+  Game.find({completed: false}).where('_id').nin(exclude).populate('white').populate('black').sort('name').limit(100).exec(function(err, games) {
     res.render('game_list',{games: games});
   });
 };
@@ -235,7 +352,7 @@ exports.message = function (req, res) {
   switch(check_string)
   {
     case "good":
-      io.sockets.emit('games/'+req.params.id+"/message", {name: res.locals.current_user.name, message: req.body.message});
+      io.sockets.emit('games/'+req.params.id+"/message", {name: res.locals.current_user.name, message: req.body.message, chat: req.params.id});
       res.json({});
       return;
     case "bad_length":
@@ -247,40 +364,36 @@ exports.message = function (req, res) {
   }
 };
 
+exports.request_move = function (req, res){
+  Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
+    var mate = checkCheck(game);
+    var is_ai = game.game_type === 'ai';
+    if(is_ai && mate !== 'Checkmate' && game.fen.split(' ')[1] == 'b'){
+      request('http://'+game.ai_url+'?fen='+game.fen, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var from = body.substring(0,2);
+          var to = body.substring(2,4);
+          var promotion = body.substring(4);
+          if(body.length == 5){
+            var move = chess.move({from: from, to: to, promotion: promotion});
+          }else{
+            var move = chess.move({from: from, to: to});
+          }
+          g.past_fen.push(g.fen);
+          g.fen = chess.fen();
+          g.save();
+          io.sockets.emit(req.params.id+'/move', {fen: g.fen, move: checkCheck(g)});
+        }
+      });
+    }
+  });
+}
+
 function checkCheck(game){
   chess.load(game.fen);
   var stat = '';
   if(chess.in_checkmate()){
     stat = 'Checkmate';
-    if(!game.completed){
-      game.completed = true;
-      var is_ai = game.game_type === 'ai';
-      if(!is_ai){
-        if(game.fen.split(' ')[1] == 'w'){ //White won
-            var winner = game.white;
-            var loser = game.black;
-        }else{ //Black won
-          var loser = game.white;
-          var winner = game.black;
-        }
-        var expected_score = 1 / (1 + Math.pow(10,(winner.elo_rating - loser.elo_rating)/400));
-        console.log(expected_score);
-        winner.games_played += 1;
-        loser.games_played += 1;
-        winner.wins += 1;
-        loser.losses += 1;
-        winner.elo_rating = winner.elo_rating + Math.round(15 * (1 - expected_score));
-        loser.elo_rating = loser.elo_rating + Math.round(15 * (0 - expected_score));
-        winner.save();
-        loser.save();
-      }
-      game.save(function(err, g) {
-        if (err){
-          res.send(500);
-          return;
-        }
-      });
-    }
   }else if(chess.in_draw()){
     stat = 'Draw';
   }else if(chess.in_stalemate()){

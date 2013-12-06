@@ -26,9 +26,12 @@ block content
           select(name="mode", id="game_mode")
             option(value="classic") Classic
             option(value="960") 960
-            option(value="blitz") Blitz
             option(value="ai") AI
           input(type="submit", value="Create Game", id="create_game")
+    .loading.hidden
+      img(src="/images/spinner.gif")
+      br
+      ="Checking for valid AI..."
   #game_list.grid_8
     table.striped_table.center
       caption="Active Games"
@@ -43,8 +46,10 @@ block content
         -var black = games[i].black
         include game_row
   .chat.grid_4
-    center="Lobby Chat"
-    #chat_messages.chat_messages
+    center="Chat"
+    ul(id="chat_tabs")
+      li(data-chat="lobby", class="selected")="Lobby"
+    .chat_messages(id="lobby-chat")
     form(name="lobby_message", id="message", action="/lobby_message/", method="post")
       input(type="hidden", id="room", name="room", value="lobby")
       input(type="submit", id="chat_submit", name="chat_submit",class="right")

@@ -3,16 +3,29 @@ $(function(){
   var receive_message = function(data){
     var name = data.name;
     var message = data.message;
-    var chatbox = $("#chat_messages");
+    var chat = data.chat;
+    var chatbox = $("#"+chat+"-chat");
     chatbox.html(chatbox.html() +"<div class='chat_message'><b>"+name+"</b>: "+message+"</div>");
-    chatbox.scrollTop(chatbox[0].scrollHeight);
+    chatbox.scrollTop(chatbox.scrollHeight);
   };
+
+  $("#chat_tabs").on("click", "li", function(e){
+    e.preventDefault();
+    $(".selected").removeClass("selected");
+    $(this).addClass("selected");
+    $('.chat_messages').addClass("hidden");
+    var chatbox = $("#"+$(this).data("chat")+"-chat");
+    $(chatbox).removeClass("hidden");
+    $(chatbox).scrollTop(chatbox.scrollHeight);
+    $('#message #room').val($(this).data("chat"));
+  });
 
   if(game_board.length > 0){
     game_board.each(function(){
       var game_id = $(this).attr('id');
       new Chess(game_id,socket);
       socket.on(game_id+'/join', function(data){
+        debugger;
         var board = $('#'+data.id);
         if(data.color == 'b'){
           board.parent().find('.black_name').text(data.name);
@@ -22,12 +35,10 @@ $(function(){
       });
       socket.on('games/'+game_id+'/message', receive_message);
     });
-
-  }else{
-    socket.on('games/lobby/message', receive_message);
   }
+  socket.on('games/lobby/message', receive_message);
 
-  $('.body').on('click','.join_game, #create_game, .login, .create_user',function(e){
+  $('.body').on('click','.join_game, .login, .create_user, .request_move',function(e){
     e.preventDefault();
     var form = $(this).parents('form');
     var url = form.attr('action');
@@ -45,6 +56,38 @@ $(function(){
         }
       }
     });
+  });
+
+  $('#create_game').click(function(e){
+    e.preventDefault();
+    var mode = $('#game_mode').find('option:selected').val();
+    if(mode === 'ai'){
+      var loading = $('.loading');
+      loading.css({opacity: 0}).removeClass('hidden');
+      loading.animate({opacity: 1},500);
+    }
+    var form = $(this).parents('form');
+    var url = form.attr('action');
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: form.serialize(),
+      dataType: "json",
+      success: function(data) {
+        if (data.redirect) {
+          window.location.href = data.redirect;
+        }
+        else if(data.error) {
+          animateErrorMessage(data.error);
+          if(mode === 'ai'){
+            loading.animate({opacity: 0},500,function(){
+              loading.addClass('.hidden');
+            });
+          }
+        }
+      }
+    });
+
   });
 
   $('.quit_game').click(function(e){
@@ -68,15 +111,20 @@ $(function(){
   $('body').on('click','.new_game',function(){
     var current = $(this);
     current.addClass('game_list_holder').removeClass('new_game');
-    current.load('/games/game_list');
+    var games = [];
+    $('.live_game').each(function(){
+      games.push($(this).find('.game_board').attr('id'));
+    });
+    current.load('/games/game_list',{exclude: games});
   });
 
   $('.body').on('click','.add_game',function(){
     var id = $(this).attr('id');
-    $(this).parents('.game_list_holder').removeClass('game_list_holder');
+    var holder = $(this).parents('.game_list_holder');
     var next = $(this).parents('.grid_4').nextAll('.grid_4').first().children().first();
     $(this).parent().load('/games/'+id+'/board',function(){
       $('#'+id).parent().css({opacity: 0});
+      holder.removeClass('game_list_holder').addClass('live_game');
       next.css({opacity: 0});
       new Chess(id,socket);
       $('#'+id).parent().animate({opacity: 1},500);

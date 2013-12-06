@@ -268,16 +268,20 @@ function Chess(id,socket) {
     }
   }
 
+  c.setStatus = function(stat){
+    if(stat !== ''){
+        c.message.attr({text: stat}).animate({opacity: 0.75},250);
+    }
+    else if(typeof(stat) !== 'undefined'){
+      c.message.animate({opacity: 0},250,function(){
+        c.message.attr({text: ''});
+      });
+    }
+  }
+
   c.checkStatus = function(){
     $.post('/games/'+id+'/check',function(data){
-      if(data.checkStatus !== ''){
-        c.message.attr({text: data.checkStatus}).animate({opacity: 0.75},250);
-      }
-      else{
-        c.message.animate({opacity: 0},250,function(){
-          c.message.attr({text: ''});
-        });
-      }
+      c.setStatus(data.checkStatus);
     });
   }
 
@@ -317,16 +321,15 @@ function Chess(id,socket) {
           var pc = "White";
         }
         $('#'+id).parent().find('.c_turn').text(pc);
-
         c.logic.load(data.fen);
         c.movePiece(data.move);
+        c.setStatus(data.checkStatus);
         if(typeof data.move.promotion !== 'undefined'){
           if(pc === 'Black'){
             data.move.promotion = data.move.promotion.toUpperCase();
           }
           c.changePiece(data.move.to, data.move.promotion);
         }
-        c.checkStatus();
       });
     },'json');
   }
