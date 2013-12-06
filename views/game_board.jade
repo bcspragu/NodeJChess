@@ -29,15 +29,19 @@
             a(href="/users")=game.black.name 
             =' '
       -else
-        form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
           -if(game.game_type === 'ai')
-            ='Black: AI '
-            input(type="hidden", name="color", value="b")
+            form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/request_move")
+              ='Black: AI '
+              input(type="hidden", name="color", value="b")
+              -if(current_user.id == game.white._id)
+                a(href='#', class="request_move")
+                  ="(request move)"
           -else
-            ='Black: None '
-            input(type="hidden", name="color", value="b")
-            a(href='#', class="join_game")
-              ="(join)"
+            form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
+              ='Black: None '
+              input(type="hidden", name="color", value="b")
+              a(href='#', class="join_game")
+                ="(join)"
     .white_player
       -if(game.white)
         ='White: '
@@ -68,11 +72,19 @@
           -else
             =game.black.name
       -else
-        form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
-          ='None '
-          input(type="hidden", name="color", value="b")
-          a(href='#', class="join_game")
-            ="(join)"
+          -if(game.game_type === 'ai')
+            form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/request_move")
+              ='AI '
+              input(type="hidden", name="color", value="b")
+              -if(current_user.id == game.white._id)
+                a(href='#', class="request_move")
+                  ="(req)"
+          -else
+            form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
+              ='None '
+              input(type="hidden", name="color", value="b")
+              a(href='#', class="join_game")
+                ="(join)"
     .white_player
       -if(game.white)
         span.white_name

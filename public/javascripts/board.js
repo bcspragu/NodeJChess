@@ -27,7 +27,7 @@ $(function(){
     socket.on('games/lobby/message', receive_message);
   }
 
-  $('.body').on('click','.join_game, #create_game, .login, .create_user',function(e){
+  $('.body').on('click','.join_game, #create_game, .login, .create_user, .request_move',function(e){
     e.preventDefault();
     var form = $(this).parents('form');
     var url = form.attr('action');
@@ -73,10 +73,11 @@ $(function(){
 
   $('.body').on('click','.add_game',function(){
     var id = $(this).attr('id');
-    $(this).parents('.game_list_holder').removeClass('game_list_holder');
+    var holder = $(this).parents('.game_list_holder');
     var next = $(this).parents('.grid_4').nextAll('.grid_4').first().children().first();
     $(this).parent().load('/games/'+id+'/board',function(){
       $('#'+id).parent().css({opacity: 0});
+      holder.removeClass('game_list_holder');
       next.css({opacity: 0});
       new Chess(id,socket);
       $('#'+id).parent().animate({opacity: 1},500);

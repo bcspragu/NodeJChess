@@ -167,17 +167,17 @@ exports.move = function(req,res) {
                 g.past_fen.push(g.fen);
                 g.fen = chess.fen();
                 g.save();
-                checkCheck(g);
-                io.sockets.emit(req.params.id+'/move', {fen: g.fen, move: move});
+                io.sockets.emit(req.params.id+'/move', {fen: g.fen, move: move, checkStatus: checkCheck(g)});
               }
             });
           }
+          io.sockets.emit(req.params.id+'/move', {fen: post.fen, move: post.move, checkStatus: mate});
+          res.send(200);
+          return;
         }
       });
     }
   });
-  io.sockets.emit(req.params.id+'/move', {fen: post.fen, move: post.move});
-  res.send(200);
 }
 
 exports.info = function(req, res) {
@@ -247,6 +247,32 @@ exports.message = function (req, res) {
   }
 };
 
+exports.request_move = function (req, res){
+  Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
+    var mate = checkCheck(game);
+    var is_ai = game.game_type === 'ai';
+
+    if(is_ai && mate !== 'Checkmate' && game.fen.split(' ')[1] == 'b'){
+      request('http://'+game.ai_url+'?fen='+game.fen, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var from = body.substring(0,2);
+          var to = body.substring(2,4);
+          var promotion = body.substring(4);
+          if(body.length == 5){
+            var move = chess.move({from: from, to: to, promotion: promotion});
+          }else{
+            var move = chess.move({from: from, to: to});
+          }
+          g.past_fen.push(g.fen);
+          g.fen = chess.fen();
+          g.save();
+          io.sockets.emit(req.params.id+'/move', {fen: g.fen, move: checkCheck(g)});
+        }
+      });
+    }
+  });
+}
+
 function checkCheck(game){
   chess.load(game.fen);
   var stat = '';
@@ -256,7 +282,7 @@ function checkCheck(game){
       game.completed = true;
       var is_ai = game.game_type === 'ai';
       if(!is_ai){
-        if(game.fen.split(' ')[1] == 'w'){ //White won
+        if(game.fen.split(' ')[1] == 'b'){ //White won
             var winner = game.white;
             var loser = game.black;
         }else{ //Black won
@@ -274,12 +300,7 @@ function checkCheck(game){
         winner.save();
         loser.save();
       }
-      game.save(function(err, g) {
-        if (err){
-          res.send(500);
-          return;
-        }
-      });
+      game.save();
     }
   }else if(chess.in_draw()){
     stat = 'Draw';

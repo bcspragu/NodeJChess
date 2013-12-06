@@ -268,16 +268,21 @@ function Chess(id,socket) {
     }
   }
 
+  c.setStatus = function(stat){
+    debugger;
+    if(stat !== ''){
+        c.message.attr({text: stat}).animate({opacity: 0.75},250);
+    }
+    else{
+      c.message.animate({opacity: 0},250,function(){
+        c.message.attr({text: ''});
+      });
+    }
+  }
+
   c.checkStatus = function(){
     $.post('/games/'+id+'/check',function(data){
-      if(data.checkStatus !== ''){
-        c.message.attr({text: data.checkStatus}).animate({opacity: 0.75},250);
-      }
-      else{
-        c.message.animate({opacity: 0},250,function(){
-          c.message.attr({text: ''});
-        });
-      }
+      c.setStatus(data.checkStatus);
     });
   }
 
@@ -317,7 +322,7 @@ function Chess(id,socket) {
           var pc = "White";
         }
         $('#'+id).parent().find('.c_turn').text(pc);
-
+        c.setStatus(data.checkStatus);
         c.logic.load(data.fen);
         c.movePiece(data.move);
         if(typeof data.move.promotion !== 'undefined'){
@@ -326,7 +331,6 @@ function Chess(id,socket) {
           }
           c.changePiece(data.move.to, data.move.promotion);
         }
-        c.checkStatus();
       });
     },'json');
   }
