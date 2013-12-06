@@ -25,8 +25,7 @@ exports.user_page = function(req, res) {
 				Game.find({white:user._id,completed:true}).populate('white').populate('black').exec(function(err,white_games)
 				{
 					gameList.push(white_games);
-					console.log(gameList[0][1].name);
-					var realGameList = []
+					var realGameList = [];
 					realGameList = realGameList.concat.apply(realGameList,gameList);
 					res.render('user_page', { title: 'User Page', user: user, games: realGameList });
 				});
