@@ -2,4 +2,42 @@ extends layout
 
 block content
 	h1
-		=user.name
+		=user.name + "'s Profile Page"
+	#user_stats.grid_4
+		table.striped_table.center
+			h2.center="Stats"
+			tr
+				td
+					b ELO Rating
+				td=user.elo_rating
+			tr
+				td
+					b Games Played
+				td=user.games_played
+			tr
+				td 
+					b Wins
+				td=user.wins
+			tr
+				td 
+					b Losses
+				td=user.losses
+	.grid_8
+		h2.center="Last games played"
+		table.striped_table.center
+			tr
+				th="Game Name"
+				th="White Player"
+				th="Black Player"
+			-for (var i = 0; i < games.length; i++)
+				-var game = games[i]
+				-var white = games[i].white
+				-var black = games[i].black
+				tr
+					td=game.name
+					td=(white ? white.name : "None")
+					td=(black ? black.name : "None")
+				
+				
+				
+	
