@@ -17,28 +17,8 @@ var MongoStore = require('connect-mongo')(express);
 
 app = express();
 var server = http.createServer(app);
-io = require('socket.io');
+io = require('socket.io').listen(server);
 request = require('request');
-
-var redis = require("redis");
-var RedisStore = io.RedisStore;
-io = io.listen(server);
-
-if (process.env.REDISTOGO_URL) {
-  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-  var client = redis.createClient(rtg.port, rtg.hostname);
-  client.auth(rtg.auth.split(":")[1]);
-  var sub = redis.createClient(rtg.port, rtg.hostname);
-  sub.auth(rtg.auth.split(":")[1]);
-  var pub = redis.createClient(rtg.port, rtg.hostname);
-  pub.auth(rtg.auth.split(":")[1]);
-} else {
-  var pub = require("redis").createClient();
-  var sub = require("redis").createClient();
-  var client = require("redis").createClient();
-}
-
-io.set('store', new RedisStore({redis: redis, redisPub: pub, redisSub: sub, redisClient: client }));
 
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
 // database
