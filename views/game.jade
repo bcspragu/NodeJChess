@@ -6,7 +6,11 @@ block content
     -var verbose = true;
     include game_board
   .grid_4.game_chat
-    #chat_messages.chat_messages
+    ul(id="chat_tabs")
+      li(data-chat="lobby")="Lobby"
+      li(data-chat=""+game._id, class="selected")="Game"
+    .chat_messages.hidden(id="lobby-chat")
+    .chat_messages(id=""+game._id+"-chat")
     form(name="/game_message", id="message", action="/games/"+game._id+"/message/", method="post")
       input(type="hidden", id="room", name="room", value=game.id)
       input(type="submit", id="chat_submit", name="chat_submit", class="right")

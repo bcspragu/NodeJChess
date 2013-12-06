@@ -235,7 +235,7 @@ exports.message = function (req, res) {
   switch(check_string)
   {
     case "good":
-      io.sockets.emit('games/'+req.params.id+"/message", {name: res.locals.current_user.name, message: req.body.message});
+      io.sockets.emit('games/'+req.params.id+"/message", {name: res.locals.current_user.name, message: req.body.message, chat: req.params.id});
       res.json({});
       return;
     case "bad_length":
