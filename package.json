@@ -19,7 +19,6 @@
     "chess.js": "*",
     "connect-mongo": "*",
     "redis": "*",
-    "hiredis": "*",
-    "redis-url": "*"
+    "hiredis": "*"
   }
 }

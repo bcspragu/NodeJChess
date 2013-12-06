@@ -15,9 +15,19 @@ var User = require('./models/User');
 var Game = require('./models/Game');
 var MongoStore = require('connect-mongo')(express);
 var RedisStore = require('socket.io/lib/stores/redis');
-var pub = process.env.REDISTOGO_URL ? require('redis-url').connect(process.env.REDISTOGO_URL) : require('redis').createClient();
-var sub = process.env.REDISTOGO_URL ? require('redis-url').connect(process.env.REDISTOGO_URL) : require('redis').createClient();
-var client = process.env.REDISTOGO_URL ? require('redis-url').connect(process.env.REDISTOGO_URL) : require('redis').createClient();
+if (process.env.REDISTOGO_URL) {
+  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+  var pub = require("redis").createClient(rtg.port, rtg.hostname);
+  pub.auth(rtg.auth.split(":")[1]);
+  var sub = require("redis").createClient(rtg.port, rtg.hostname);
+  sub.auth(rtg.auth.split(":")[1]);
+  var client = require("redis").createClient(rtg.port, rtg.hostname);
+  client.auth(rtg.auth.split(":")[1]);
+} else {
+  var pub = require("redis").createClient();
+  var sub = require("redis").createClient();
+  var client = require("redis").createClient();
+}
 
 app = express();
 var server = http.createServer(app);
