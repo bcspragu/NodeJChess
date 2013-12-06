@@ -15,13 +15,15 @@ var User = require('./models/User');
 var Game = require('./models/Game');
 var MongoStore = require('connect-mongo')(express);
 var RedisStore = require('socket.io/lib/stores/redis');
+
 if (process.env.REDISTOGO_URL) {
   var rtg   = require("url").parse(process.env.REDISTOGO_URL);
   var redis = require("redis");
-  redis.auth(rtg.auth.split(":")[1]);
-  var pub = redis.createClient().createClient(rtg.port, rtg.hostname);
-  var sub = redis.createClient().createClient(rtg.port, rtg.hostname);
-  var client = redis.createClient().createClient(rtg.port, rtg.hostname);
+  redis.createClient(rtg.port, rtg.hostname).auth(rtg.auth.split(":")[1]);
+
+  var pub = redis.createClient(rtg.port, rtg.hostname).auth(rtg.auth.split(":")[1]);;
+  var sub = redis.createClient(rtg.port, rtg.hostname).auth(rtg.auth.split(":")[1]);;
+  var client = redis.createClient(rtg.port, rtg.hostname).auth(rtg.auth.split(":")[1]);;
 } else {
   var redis = require("redis");
   var pub = redis.createClient()
@@ -39,7 +41,6 @@ io.set('store', new RedisStore({
     redisPub : pub
   , redisSub : sub
   , redisClient : client
-
 }));
 
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
