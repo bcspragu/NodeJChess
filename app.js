@@ -13,7 +13,6 @@ var path = require('path');
 var mongoose = require('mongoose');
 var User = require('./models/User');
 var Game = require('./models/Game');
-var MongoStore = require('connect-mongo')(express);
 
 app = express();
 var server = http.createServer(app);
@@ -38,13 +37,7 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('something super secret?'));
-app.use(express.session({
-  secret: 'something super secret?',
-  store: new MongoStore({
-    url: mongoUri,
-    mongoose_connection: db
-  })
-}));
+app.use(express.session());
 
 //If we aren't in development, we're on heroku and need to use long polling
 if ('development' != app.get('env')) {
