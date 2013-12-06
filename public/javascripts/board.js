@@ -25,6 +25,7 @@ $(function(){
       var game_id = $(this).attr('id');
       new Chess(game_id,socket);
       socket.on(game_id+'/join', function(data){
+        debugger;
         var board = $('#'+data.id);
         if(data.color == 'b'){
           board.parent().find('.black_name').text(data.name);

@@ -38,10 +38,12 @@
                   ="(request move)"
           -else
             form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
-              ='Black: None '
-              input(type="hidden", name="color", value="b")
-              a(href='#', class="join_game")
-                ="(join)"
+              ='Black: '
+              span.black_name
+                ="None "
+                input(type="hidden", name="color", value="b")
+                a(href='#', class="join_game")
+                  ="(join)"
     .white_player
       -if(game.white)
         ='White: '
@@ -81,10 +83,11 @@
                   ="(req)"
           -else
             form(id="myform1"+game._id, method="post", action="/games/"+game._id+"/join")
-              ='None '
-              input(type="hidden", name="color", value="b")
-              a(href='#', class="join_game")
-                ="(join)"
+              span.black_name
+                ='None '
+                input(type="hidden", name="color", value="b")
+                a(href='#', class="join_game")
+                  ="(join)"
     .white_player
       -if(game.white)
         span.white_name
@@ -96,7 +99,8 @@
             =game.white.name
       -else
         form(id="myform2"+game._id, method="post", action="/games/"+game._id+"/join")
-          ='None '
-          input(type="hidden", name="color", value="w")
-          a(href='#', class="join_game")
-            ="(join)"
+          span.black_name
+            ='None '
+            input(type="hidden", name="color", value="w")
+            a(href='#', class="join_game")
+              ="(join)"

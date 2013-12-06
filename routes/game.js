@@ -88,10 +88,13 @@ exports.create_game = function(req, res) {
         request('http://'+post.ai_url+'?fen=rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', function (error, response, body) {
           if (!error && response.statusCode == 200 && body.length == 4) {
             game.save(function (err, g) {
-              if (err)
+              if (err){
                 res.json({error: 'An error has occurred' });
+                return;
+              }
               else {
                 res.json({redirect: '/games/'+g._id});
+                return;
               }
             });
             app.render('game_row',{game: game, white: white, black: black},function(err,html){
@@ -99,6 +102,7 @@ exports.create_game = function(req, res) {
             });
           }else{
               res.json({error: 'Invalid AI' });
+              return;
           }
         });
       }
@@ -169,6 +173,51 @@ exports.move = function(req,res) {
       game.past_fen.push(game.fen);
       game.fen = post.fen;
       var mate = checkCheck(game);
+      switch(mate){
+        case 'Checkmate':
+          game.completed = true;
+          if(!is_ai){
+            if(game.fen.split(' ')[1] == 'b'){ //White won
+                var winner = game.white;
+                var loser = game.black;
+            }else{ //Black won
+              var loser = game.white;
+              var winner = game.black;
+            }
+            var expected_score = 1 / (1 + Math.pow(10,(winner.elo_rating - loser.elo_rating)/400));
+            winner.games_played += 1;
+            loser.games_played += 1;
+            winner.wins += 1;
+            loser.losses += 1;
+            winner.elo_rating = winner.elo_rating + Math.round(15 * (1 - expected_score));
+            loser.elo_rating = loser.elo_rating + Math.round(15 * (0 - expected_score));
+            winner.save();
+            loser.save();
+          }
+          break;
+        case 'Stalemate':
+          game.completed = true;
+          if(!is_ai){
+            var white = game.white;
+            var black = game.black;
+            white.games_played += 1;
+            black.games_played += 1;
+            white.save();
+            black.save();
+          }
+          break;
+        case 'Draw':
+          game.completed = true;
+          if(!is_ai){
+            var white = game.white;
+            var black = game.black;
+            white.games_played += 1;
+            black.games_played += 1;
+            white.save();
+            black.save();
+          }
+          break;
+      }
       game.save(function(err, g) {
         if (err){
           res.send(500);
@@ -187,8 +236,54 @@ exports.move = function(req,res) {
                 }
                 g.past_fen.push(g.fen);
                 g.fen = chess.fen();
+                mate = checkCheck(g);
+                switch(mate){
+                  case 'Checkmate':
+                    g.completed = true;
+                    if(!is_ai){
+                      if(g.fen.split(' ')[1] == 'b'){ //White won
+                          var winner = game.white;
+                          var loser = game.black;
+                      }else{ //Black won
+                        var loser = game.white;
+                        var winner = game.black;
+                      }
+                      var expected_score = 1 / (1 + Math.pow(10,(winner.elo_rating - loser.elo_rating)/400));
+                      winner.games_played += 1;
+                      loser.games_played += 1;
+                      winner.wins += 1;
+                      loser.losses += 1;
+                      winner.elo_rating = winner.elo_rating + Math.round(15 * (1 - expected_score));
+                      loser.elo_rating = loser.elo_rating + Math.round(15 * (0 - expected_score));
+                      winner.save();
+                      loser.save();
+                    }
+                    break;
+                  case 'Stalemate':
+                    game.completed = true;
+                    if(!is_ai){
+                      var white = game.white;
+                      var black = game.black;
+                      white.games_played += 1;
+                      black.games_played += 1;
+                      white.save();
+                      black.save();
+                    }
+                    break;
+                  case 'Draw':
+                    game.completed = true;
+                    if(!is_ai){
+                      var white = game.white;
+                      var black = game.black;
+                      white.games_played += 1;
+                      black.games_played += 1;
+                      white.save();
+                      black.save();
+                    }
+                    break;
+                }
                 g.save();
-                io.sockets.emit(req.params.id+'/move', {fen: g.fen, move: move, checkStatus: checkCheck(g)});
+                io.sockets.emit(req.params.id+'/move', {fen: g.fen, move: move, checkStatus: mate});
               }
             });
           }
@@ -273,7 +368,6 @@ exports.request_move = function (req, res){
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
     var mate = checkCheck(game);
     var is_ai = game.game_type === 'ai';
-
     if(is_ai && mate !== 'Checkmate' && game.fen.split(' ')[1] == 'b'){
       request('http://'+game.ai_url+'?fen='+game.fen, function (error, response, body) {
         if (!error && response.statusCode == 200) {
@@ -300,30 +394,6 @@ function checkCheck(game){
   var stat = '';
   if(chess.in_checkmate()){
     stat = 'Checkmate';
-    if(!game.completed){
-      game.completed = true;
-      var is_ai = game.game_type === 'ai';
-      if(!is_ai){
-        if(game.fen.split(' ')[1] == 'b'){ //White won
-            var winner = game.white;
-            var loser = game.black;
-        }else{ //Black won
-          var loser = game.white;
-          var winner = game.black;
-        }
-        var expected_score = 1 / (1 + Math.pow(10,(winner.elo_rating - loser.elo_rating)/400));
-        console.log(expected_score);
-        winner.games_played += 1;
-        loser.games_played += 1;
-        winner.wins += 1;
-        loser.losses += 1;
-        winner.elo_rating = winner.elo_rating + Math.round(15 * (1 - expected_score));
-        loser.elo_rating = loser.elo_rating + Math.round(15 * (0 - expected_score));
-        winner.save();
-        loser.save();
-      }
-      game.save();
-    }
   }else if(chess.in_draw()){
     stat = 'Draw';
   }else if(chess.in_stalemate()){
