@@ -30,13 +30,15 @@ if (process.env.REDISTOGO_URL) {
   client.auth(rtg.auth.split(":")[1]);
   var sub = redis.createClient(rtg.port, rtg.hostname);
   sub.auth(rtg.auth.split(":")[1]);
+  var pub = redis.createClient(rtg.port, rtg.hostname);
+  pub.auth(rtg.auth.split(":")[1]);
 } else {
   var pub = require("redis").createClient();
   var sub = require("redis").createClient();
   var client = require("redis").createClient();
 }
 
-io.set('store', new RedisStore({redis: redis, redisPub: client, redisSub: sub, redisClient: client }));
+io.set('store', new RedisStore({redis: redis, redisPub: pub, redisSub: sub, redisClient: client }));
 
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
 // database
