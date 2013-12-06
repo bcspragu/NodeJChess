@@ -22,6 +22,7 @@ request = require('request');
 
 var redis = require("redis");
 var RedisStore = io.RedisStore;
+io = io.listen(server);
 
 if (process.env.REDISTOGO_URL) {
   var rtg   = require("url").parse(process.env.REDISTOGO_URL);
@@ -35,7 +36,7 @@ if (process.env.REDISTOGO_URL) {
   var client = require("redis").createClient();
 }
 
-io.listen(server).set('store', new RedisStore({redis: redis, redisPub: client, redisSub: sub, redisClient: client }));
+io.set('store', new RedisStore({redis: redis, redisPub: client, redisSub: sub, redisClient: client }));
 
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
 // database
