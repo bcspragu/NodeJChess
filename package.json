@@ -17,6 +17,8 @@
     "socket.io": "*",
     "request": "*",
     "chess.js": "*",
-    "connect-mongo": "*"
+    "connect-mongo": "*",
+    "redis": "*",
+    "hiredis": "*"
   }
 }

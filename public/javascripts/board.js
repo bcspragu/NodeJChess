@@ -59,9 +59,12 @@ $(function(){
 
   $('#create_game').click(function(e){
     e.preventDefault();
-    var loading = $('.loading');
-    loading.css({opacity: 0}).removeClass('hidden');
-    loading.animate({opacity: 1},500);
+    var mode = $('#game_mode').find('option:selected').val();
+    if(mode === 'ai'){
+      var loading = $('.loading');
+      loading.css({opacity: 0}).removeClass('hidden');
+      loading.animate({opacity: 1},500);
+    }
     var form = $(this).parents('form');
     var url = form.attr('action');
     $.ajax({
@@ -75,9 +78,11 @@ $(function(){
         }
         else if(data.error) {
           animateErrorMessage(data.error);
-          loading.animate({opacity: 0},500,function(){
-            loading.addClass('.hidden');
-          });
+          if(mode === 'ai'){
+            loading.animate({opacity: 0},500,function(){
+              loading.addClass('.hidden');
+            });
+          }
         }
       }
     });
