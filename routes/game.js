@@ -90,11 +90,9 @@ exports.create_game = function(req, res) {
             game.save(function (err, g) {
               if (err){
                 res.json({error: 'An error has occurred' });
-                return;
               }
               else {
                 res.json({redirect: '/games/'+g._id});
-                return;
               }
             });
             app.render('game_row',{game: game, white: white, black: black},function(err,html){
@@ -102,7 +100,6 @@ exports.create_game = function(req, res) {
             });
           }else{
               res.json({error: 'Invalid AI' });
-              return;
           }
         });
       }
