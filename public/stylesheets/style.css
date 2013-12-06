@@ -183,7 +183,7 @@ a {
   max-height: 300px;
   background-color:white;
   width: 214px; 
-  border: 1px solid black;
+  border: 1px solid #ccc;
   overflow: scroll;
   padding: 2px;
 }
@@ -211,3 +211,51 @@ a {
  .game_list_holder {
    //TODO Force Dan or Reed to make nice looking CSS for this
  }
+
+.hidden {
+  display: none;
+}
+
+#chat_tabs {
+  border:1px solid #ccc; 
+  height:28px;
+  background:#eff5f9; 
+  padding-top: 5px;
+  -moz-box-shadow: inset 0 -2px 2px #dadada;
+  -webkit-box-shadow:inset  0 -2px 2px #dadada;
+  box-shadow: inset 0 -2px 2px #dadada;
+  border-top-left-radius:4px;  
+  border-top-right-radius:4px;
+  -webkit-padding-start: 4px;
+  margin: 0px 0px 0px 0px;
+}
+
+#chat_tabs li {
+  float:left; 
+  list-style:none; 
+  border-top:1px solid #ccc; 
+  border-left:1px solid #ccc; 
+  border-right:1px solid #ccc; 
+  margin-right:0px; 
+  border-top-left-radius:3px;  
+  border-top-right-radius:3px;
+  -moz-box-shadow: 0 -2px 2px #dadada;
+  -webkit-box-shadow:  0 -2px 2px #dadada;
+  box-shadow: 0 -2px 2px #dadada;
+  font-weight:bold; 
+  color:#000000; 
+  padding:7px 14px 4px 12px; 
+  display:block; 
+  background:#FFFFFF;  
+  border-top-left-radius:3px; 
+  border-top-right-radius:3px; 
+  text-decoration:none;
+  background: #eff5f9;
+  text-shadow:-1px -1px 0 #fff;
+  outline:none;
+}
+
+#chat_tabs li.selected {
+  background: -moz-linear-gradient(top, #ebebeb, white 10%);  
+  background: -webkit-gradient(linear, 0 0, 0 10%, from(#ebebeb), to(white)); 
+}

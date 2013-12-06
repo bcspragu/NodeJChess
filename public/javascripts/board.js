@@ -3,10 +3,22 @@ $(function(){
   var receive_message = function(data){
     var name = data.name;
     var message = data.message;
-    var chatbox = $("#chat_messages");
+    var chat = data.chat;
+    var chatbox = $("#"+chat+"-chat");
     chatbox.html(chatbox.html() +"<div class='chat_message'><b>"+name+"</b>: "+message+"</div>");
-    chatbox.scrollTop(chatbox[0].scrollHeight);
+    chatbox.scrollTop(chatbox.scrollHeight);
   };
+
+  $("#chat_tabs").on("click", "li", function(e){
+    e.preventDefault();
+    $(".selected").removeClass("selected");
+    $(this).addClass("selected");
+    $('.chat_messages').addClass("hidden");
+    var chatbox = $("#"+$(this).data("chat")+"-chat");
+    $(chatbox).removeClass("hidden");
+    $(chatbox).scrollTop(chatbox.scrollHeight);
+    $('#message #room').val($(this).data("chat"));
+  });
 
   if(game_board.length > 0){
     game_board.each(function(){
@@ -22,10 +34,8 @@ $(function(){
       });
       socket.on('games/'+game_id+'/message', receive_message);
     });
-
-  }else{
-    socket.on('games/lobby/message', receive_message);
   }
+  socket.on('games/lobby/message', receive_message);
 
   $('.body').on('click','.join_game, #create_game, .login, .create_user',function(e){
     e.preventDefault();
