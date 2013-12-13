@@ -64,6 +64,20 @@ function buildBreadCrumbs(url) {
         //add game id
         breadcrumbs.push([url_bits[2].substring(0,8)+"...", "/games/"+url_bits[2]]);
     }
+    //if it's 'users'...
+    else if (url_bits[1] == "users") {
+      //push a link with the text "Games" leading to "/games/"
+      breadcrumbs.push(["Users", "/users/"]);
+      //check second part (if first part is "/games/", then second part would be game id)
+      if (url_bits[2])
+        //add game id
+        breadcrumbs.push([url_bits[2], "/users/"+url_bits[2]]);
+    }
+    //if it's super spectator
+    else if (url_bits[1] == "super_spectator") {
+      //push a link with the text "Games" leading to "/games/"
+      breadcrumbs.push(["Super Spectator", "/super_spectator"]);
+    }
   }
   return breadcrumbs;
 }
