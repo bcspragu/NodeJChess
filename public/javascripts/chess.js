@@ -1,3 +1,11 @@
+/*
+ * This is the actual chessboard class. To create a chessboard with working socket support,
+ * just use: new Chess(id, socket), where id is the id of the DOM element we're going to fill
+ * with a chessboard, and the socket is the socket object that socket.io gives you. You never
+ * make any calls to this chess object, everything is handled internally from there
+ *
+ * The vast majority of the work I (Brandon Sprague) did on this project is in this file
+ */
 function Chess(id,socket) {
   var c = this;
   c.board = $('#'+id);
@@ -7,14 +15,10 @@ function Chess(id,socket) {
   c.pieceList = {} //Hash to hold all the pieces on the board
 
   c.changePiece = function(board_loc, piece){
-    for(var loc in c.pieceList){
-      if(loc === board_loc){
-        c.pieceList[loc].attr({src: '/images/pieces/'+piece+'.png'});
-        break;
-      }
-    }
+    c.pieceList[board_loc].attr({src: '/images/pieces/'+piece+'.png'});
   }
 
+  //Moving a piece can be tricky because you need to handle castling, en passant, and pawn promotion
   c.movePiece = function(move){
     var pieceToMove = c.pieceList[move.from];
 
@@ -32,6 +36,7 @@ function Chess(id,socket) {
     var xloc = column*c.cell_size + padding;
     var yloc = row*c.cell_size + padding;
     
+    //Make knights move up and then over, not diagonally
     if(move.piece == 'n'){
       var from_x = from_column*c.cell_size + padding;
       var from_y = from_row*c.cell_size + padding;
@@ -116,6 +121,10 @@ function Chess(id,socket) {
     }
   }
 
+  //Initially, I used to load the pieces again every time someone moved,
+  //but this caused the pieces to flash, which looked bad and generated 32
+  //requests to the server everytime someone moved. Now it makes the calls
+  //once at the start and uses them after that
   c.drawInitial = function(){
     if(c.valid){
       var fen = c.logic.fen().split('');
@@ -151,6 +160,7 @@ function Chess(id,socket) {
     }
   }
 
+  //Highlight all the available moves
   c.highlightMoves = function(moves){
     for(var i = 0; i < moves.length; i++){
       var column = moves[i].to.charCodeAt(0)-97;
@@ -234,6 +244,7 @@ function Chess(id,socket) {
     return cell
   }
 
+  //Using raphael to draw the piece images, and given them the same handlers as the cells
   c.drawPiece = function(piece,row,column){
     var size = c.cell_size*0.8;
     var padding = c.cell_size*0.1;
@@ -250,6 +261,7 @@ function Chess(id,socket) {
     c.pieceList[pos] = piece;
   }
 
+  //This is used for adding in a player once someone joins
   c.reloadPlayer = function(data){
     c.player_color = data.color;
   }
@@ -268,6 +280,7 @@ function Chess(id,socket) {
     }
   }
 
+  //Lets players know if they're in check or checkmate or stalemate or the like
   c.setStatus = function(stat){
     if(stat !== ''){
         c.message.attr({text: stat}).animate({opacity: 0.75},250);
@@ -333,5 +346,4 @@ function Chess(id,socket) {
       });
     },'json');
   }
-
 }
