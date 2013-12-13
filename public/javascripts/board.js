@@ -1,6 +1,6 @@
 $(function(){
   var game_board = $('.game_board');
-  var receive_message = function(data){
+  var receive_message = function(data){ //For recieving messages when in a game
     var name = data.name;
     var message = data.message;
     var chat = data.chat;
@@ -9,7 +9,7 @@ $(function(){
     chatbox.scrollTop(chatbox.scrollHeight);
   };
 
-  $("#chat_tabs").on("click", "li", function(e){
+  $("#chat_tabs").on("click", "li", function(e){ //For changing which chat you are looking at
     e.preventDefault();
     $(".selected").removeClass("selected");
     $(this).addClass("selected");
@@ -20,7 +20,7 @@ $(function(){
     $('#message #room').val($(this).data("chat"));
   });
 
-  if(game_board.length > 0){
+  if(game_board.length > 0){ //Messaging
     game_board.each(function(){
       var game_id = $(this).attr('id');
       new Chess(game_id,socket);
@@ -38,7 +38,7 @@ $(function(){
   }
   socket.on('games/lobby/message', receive_message);
 
-  $('.body').on('click','.join_game, .login, .create_user, .request_move',function(e){
+  $('.body').on('click','.join_game, .login, .create_user, .request_move',function(e){ //Ajaxily checks for bad words and length
     e.preventDefault();
     var form = $(this).parents('form');
     var url = form.attr('action');
@@ -58,7 +58,7 @@ $(function(){
     });
   });
 
-  $('#create_game').click(function(e){
+  $('#create_game').click(function(e){ //Creates a game
     e.preventDefault();
     var mode = $('#game_mode').find('option:selected').val();
     if(mode === 'ai'){
@@ -90,7 +90,7 @@ $(function(){
 
   });
 
-  $('.quit_game').click(function(e){
+  $('.quit_game').click(function(e){ //Quits
     e.preventDefault();
     var url = $(this).attr('href');
     $.ajax({
@@ -108,7 +108,7 @@ $(function(){
     }); 
   });
 
-  $('body').on('click','.new_game',function(){
+  $('body').on('click','.new_game',function(){ //Adds a game to the game list
     var current = $(this);
     current.addClass('game_list_holder').removeClass('new_game');
     var games = [];
@@ -132,7 +132,7 @@ $(function(){
     })
   });
 
-  $('#message').submit(function(e){
+  $('#message').submit(function(e){ //Submits a message and checks for profanity and length
     e.preventDefault();
     var game_id = $(this).find('#room').val();
     $.ajax({
@@ -153,7 +153,7 @@ $(function(){
     });
   });
 
-  $('#game_mode').change(function(){
+  $('#game_mode').change(function(){ //Selecting game mode
     var mode = $(this).find('option:selected').val();
     var ai_field = $('.ai_field');
     var player_radios = $('.player_radios');
@@ -169,7 +169,7 @@ $(function(){
   });
 });
 
-function animateErrorMessage(text){
+function animateErrorMessage(text){ //Animating game errors
   var message = $('.message');
   message.text(text).css({opacity: 0}).removeClass('hidden').animate({opacity: 1}, 500, function(){
     setTimeout(function(){
