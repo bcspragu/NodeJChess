@@ -10,9 +10,9 @@ var game = require('./routes/game');
 var application = require('./routes/application');
 var http = require('http');
 var path = require('path');
-var mongoose = require('mongoose'),
-    User = require('./models/User'),
-    Game = require('./models/Game');
+var mongoose = require('mongoose');
+var User = require('./models/User');
+var Game = require('./models/Game');
 
 app = express();
 var server = http.createServer(app);
@@ -36,7 +36,7 @@ app.use(express.favicon(path.join(__dirname, 'public/images/favicon.ico')));  //
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
+app.use(express.cookieParser('something super secret?'));
 app.use(express.session());
 
 //If we aren't in development, we're on heroku and need to use long polling
@@ -120,7 +120,7 @@ app.get('/logout', application.logout);
 
 //These actions are protected by login system, checkAuth
 app.get('/', checkAuth, routes.index);
-app.get('/games/game_list', checkAuth, game.game_list);
+app.post('/games/game_list', checkAuth, game.game_list);
 app.get('/games', checkAuth, routes.index);
 app.get('/super_spectator', checkAuth, game.super_spectator);
 app.get('/users', checkAuth, user.list);
@@ -133,6 +133,7 @@ app.post('/games/:id/check', checkAuth, game.check);
 app.get('/games/:id/leave', checkAuth, game.leave);
 app.get('/games/:id/board', checkAuth, game.board);
 app.post('/games/:id/message', checkAuth, game.message);
+app.post('/games/:id/request_move', checkAuth, game.request_move);
 app.get('/users/:name', checkAuth, user.user_page);
 
 server.listen(app.get('port'), function(){

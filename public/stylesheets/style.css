@@ -209,7 +209,15 @@ a {
  }
 
  .game_list_holder {
-   //TODO Force Dan or Reed to make nice looking CSS for this
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -khtml-border-radius: 10px;
+  border-radius: 10px; 
+  border: 5px solid black;
+  height: 210px;
+  margin-top: 20px;
+  overflow: scroll;
+  text-align: center;
  }
 
 .hidden {
@@ -258,4 +266,11 @@ a {
 #chat_tabs li.selected {
   background: -moz-linear-gradient(top, #ebebeb, white 10%);  
   background: -webkit-gradient(linear, 0 0, 0 10%, from(#ebebeb), to(white)); 
+}
+
+.loading {
+  background-color: #F0F0FF;
+  padding: 10px;
+  border: 1px solid black;
+  text-align: center;
 }
