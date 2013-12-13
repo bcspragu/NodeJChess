@@ -2,7 +2,7 @@ module.exports.contains_bad_word = function(given_string) //Returns true if cont
 {
   //This array once contained all sorts of profanity
   //Given that this is an academic project, we did not feel that it was appropriate to include the array of profanity in our final submission
-	var bad_words = ["bad word", "bard word 1", "bad word 3"];
+	var bad_words = ["badword", "bardword1", "badword3"];
 
 	for(var x=0;x<bad_words.length;x++)
     {
