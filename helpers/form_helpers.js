@@ -1,6 +1,8 @@
 module.exports.contains_bad_word = function(given_string) //Returns true if contains bad words , false otherwise
 {
-	var bad_words = ["penis","vagina","fuck","nigger","douche","faggot","shit","dick","pussy","asshole","crap","poop","cunt"];
+  //This array once contained all sorts of profanity
+  //Given that this is an academic project, we did not feel that it was appropriate to include the array of profanity in our final submission
+	var bad_words = [];
 
 	for(var x=0;x<bad_words.length;x++)
     {

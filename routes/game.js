@@ -40,6 +40,7 @@ function check_message(message)
   return return_string;
 }
 
+//Creating a new game
 exports.create_game = function(req, res) {
   var post = req.body;
   var game = new Game({name: post.name});
@@ -48,13 +49,13 @@ exports.create_game = function(req, res) {
 
   switch(check_string) //Checks for length and no bad names in room names.
   {
-    case "good":
+    case "good": //No errors
       var white, black;
-      if (post.player == "w"){
+      if (post.player == "w"){ //player is joining as white
         game.white = res.locals.current_user._id;
         white = res.locals.current_user;
       }
-      if (post.player == "b"){
+      if (post.player == "b"){ //player is joining as black
         game.black = res.locals.current_user._id;
         black = res.locals.current_user;
       }
@@ -113,6 +114,7 @@ exports.create_game = function(req, res) {
   }
 };
 
+//Game view
 exports.show = function(req, res) {
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, g) {
     res.locals.game = g;
@@ -120,6 +122,7 @@ exports.show = function(req, res) {
   });
 };
 
+//Join game
 exports.join = function(req,res) {
   var post = req.body;
   Game.findById(req.params.id).populate('white').populate('black').exec(function(err, game) {
@@ -309,6 +312,7 @@ exports.info = function(req, res) {
   });
 }
 
+//
 exports.super_spectator = function(req,res) {
   res.render('super_spectator', {title: 'NodeChess'});
 };

@@ -83,15 +83,20 @@ function buildBreadCrumbs(url) {
 }
 
 //run before every request is handled
+//populates the response's local variables with the current user object and builds the breadcrumbs in the nav bar
 app.configure(function(){
   app.use(function(req, res, next){
+    //Builds breadcrumbs in nav bar
     res.locals.breadcrumbs = buildBreadCrumbs(req.url);
+    //Gets user id from cookie
     var id = mongoose.Types.ObjectId(req.session.user_id);
     User.findById(id, function(err, cur_user) {
-      //I don't know what this does, I added braces
+      // If a user was found
       if (cur_user != undefined){
+        // assign current user to be that user
         res.locals.current_user = cur_user;
       }
+      // Proceed to the requested route
       next();
     });
   });
@@ -105,6 +110,7 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+//Authentication method, checks if user's cookie has a user_id
 function checkAuth(req, res, next) {
   if (!req.session.user_id) {
     res.redirect('/login');
